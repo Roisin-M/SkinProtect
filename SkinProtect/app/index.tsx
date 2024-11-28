@@ -10,13 +10,13 @@ const Page = () => {
   return (
     <View style={styles.container}>
       <ImageBackground 
-      source={require("@/assets/images/getting-started.jpg")}
+      source={require("@/assets/images/sun-getting-started.jpg")}
        style={{flex: 1}} 
        resizeMode="cover">
        <View style={styles.wrapper}>
         {/* <StatusBar style="light"/> */}
-          <Animated.Text style={styles.title} entering={FadeInRight.delay(300).duration(500)} >Stay Updated</Animated.Text>
-          <Animated.Text style={styles.description} entering={FadeInRight.delay(700).duration(500)}>Get breaking news and personalised updates directly to your feed</Animated.Text>
+          <Animated.Text style={styles.title} entering={FadeInRight.delay(300).duration(500)} >Stay Protected</Animated.Text>
+          <Animated.Text style={styles.description} entering={FadeInRight.delay(700).duration(500)}>Get your accurate spf suncream recommendation personalised to your skin type for free</Animated.Text>
           {/*replace animation or psuh  -> push allows user to swipe back
           but replace doesnt allow this
           Animated cannot be applied to touchableopacity but we can put it in a view */}
@@ -42,11 +42,12 @@ const styles = StyleSheet.create({
   },
   wrapper:{
     flex:1,
-    justifyContent:'flex-end',
+    justifyContent:'center',
     paddingBottom: 50,
     paddingHorizontal: 30,
     gap: 10,
     backgroundColor:'rgba(0, 0, 0, 0.5)',//opacity
+    paddingTop:70,
   },
   title:{
     color: Colors.white,
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
     textAlign:'center',
   },
   btn:{
-    backgroundColor:Colors.tint,
+    backgroundColor:Colors.orange,
     paddingVertical:15,
     marginVertical:20,
     alignItems:'center',
