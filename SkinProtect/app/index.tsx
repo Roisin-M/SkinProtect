@@ -16,7 +16,7 @@ const Page = () => {
        <View style={styles.wrapper}>
         {/* <StatusBar style="light"/> */}
           <Animated.Text style={styles.title} entering={FadeInRight.delay(300).duration(500)} >Stay Protected</Animated.Text>
-          <Animated.Text style={styles.description} entering={FadeInRight.delay(700).duration(500)}>Get your accurate spf suncream recommendation personalised to your skin type for free</Animated.Text>
+          <Animated.Text style={styles.description} entering={FadeInRight.delay(700).duration(500)}>Get your accurate SPF sunscreen recommendation personalised to your skin type for free!</Animated.Text>
           {/*replace animation or psuh  -> push allows user to swipe back
           but replace doesnt allow this
           Animated cannot be applied to touchableopacity but we can put it in a view */}
