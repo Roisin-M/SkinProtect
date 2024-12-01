@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         paddingVertical:10, 
         flexDirection:'row',
         justifyContent:'space-between',
-        alignItems:'center',
+        //alignItems:'center',
         marginBottom:20,
      },
      userImg:{
