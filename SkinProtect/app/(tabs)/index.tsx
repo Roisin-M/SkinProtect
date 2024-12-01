@@ -1,8 +1,8 @@
 import { ActivityIndicator, Text, View,  StyleSheet } from 'react-native';
-//new imports
 import React, { useEffect, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Header from '@/components/Header'
+import Header from '@/components/BuddyHeader'
+import SkinQuiz from '@/components/SkinQuizComponent';
 
 export default function Index() {
     // Use the safe area insets
@@ -12,8 +12,9 @@ export default function Index() {
         <View style={[styles.container, {paddingTop:safeTop}]}>
             {/* Header component */}
             <Header/>
-            {/* Home Screen Text */}
-            <Text style={styles.text}>Home screen</Text>
+            
+            {/* Skin Quiz Component */}
+            <SkinQuiz/>
         </View>
     );
 }
