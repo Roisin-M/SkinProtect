@@ -1,44 +1,40 @@
 import React from 'react';
-import { StyleSheet, Text, View, Picker } from 'react-native';
+import { Picker as PickerComponent } from '@react-native-picker/picker'; // Explicit import
+import { View, StyleSheet, Picker } from 'react-native';
 
-type Props = {
-  label: string;
+
+type CustomPickerProps = {
   selectedValue: string;
-  onValueChange: (value: string) => void;
-  options: { label: string; value: string }[];
+  onValueChange: (itemValue: string) => void;
+  options: string[];
 };
 
-const CustomPicker = ({ label, selectedValue, onValueChange, options }: Props) => {
+const CustomPicker = ({ selectedValue, onValueChange, options }: CustomPickerProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
-      <Picker
-        selectedValue={selectedValue}
+      <Picker 
+      selectedValue={selectedValue}
         onValueChange={onValueChange}
-        style={styles.picker}>
-        {options.map((option) => (
-          <Picker.Item key={option.value} label={option.label} value={option.value} />
+        style={styles.picker}
+      >
+        {options.map((option, index) => (
+          <Picker.Item key={index} label={option} value={option} />
         ))}
       </Picker>
     </View>
   );
 };
 
-export default CustomPicker;
-
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 8,
-  },
-  picker: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+    width: '100%',
     padding: 10,
   },
+  picker: {
+    height: 50,
+    width: '100%',
+  },
 });
+
+export default CustomPicker;
+
