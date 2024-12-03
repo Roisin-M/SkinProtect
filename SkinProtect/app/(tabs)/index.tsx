@@ -3,6 +3,8 @@ import { ActivityIndicator, Text, View,  StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Header from '@/components/Header'
+import SunExposure from "@/components/SunExposure";
+import SunExposureScreen from '../SunExposureScreen';
 
 export default function Index() {
     // Use the safe area insets
@@ -12,6 +14,8 @@ export default function Index() {
         <View style={[styles.container, {paddingTop:safeTop}]}>
             {/* Header component */}
             <Header/>
+            {/*Sun Exposure Component*/}
+            <SunExposure /> 
             {/* Home Screen Text */}
             <Text style={styles.text}>Home screen</Text>
         </View>
