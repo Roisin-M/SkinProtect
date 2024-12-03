@@ -33,4 +33,11 @@ export const Colors = {
   lightGrey: '#999',
   softText: '#555',
   orange:'#fe5a1d',
+
+    // UV-specific colors based on risk level
+    uvLow: '#4CAF50', // Green (Low risk)
+    uvModerate: '#FFC107', // Yellow (Moderate risk)
+    uvHigh: '#FF5722', // Orange (High risk)
+    uvVeryHigh: '#F44336', // Red (Very High risk)
+    uvExtreme: '#9C27B0', // Purple (Extreme risk)
 };
