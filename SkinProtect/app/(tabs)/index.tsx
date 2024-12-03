@@ -14,36 +14,47 @@ export default function Index() {
     const { top: safeTop } = useSafeAreaInsets();
     const [uvIndex, setUvIndex] = useState<number | null>(null); //state to hold uv
     const [location, setLocation] = useState<Location.LocationObject | null>(null); 
+    const [latitude, setLatitude] = useState<number | null>(null); // State to hold latitude
+    const [longitude, setLongitude] = useState<number | null>(null); // State to hold longitude
     
     useEffect(()=>{
 
       //mock location for Ireland (Dublin)
-      const mockLocation={
-        latitude: 53.3498,
-        longitude: -6.2603,
-      };
+      // const mockLocation={
+      //   latitude: 53.3498,
+      //   longitude: -6.2603,
+      // };
       
-      //get Location Permissions
-      const getPermissions = async ()=>{
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if(status !== 'granted'){
-          console.log("Please grant location permission");
-          return;
+      //get Location Permissions and fetch UV Index
+      const getPermissionsAndUVIndex = async () => {
+        try {
+            // Request location permissions
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                console.log("Please grant location permission");
+                return;
+            }
+
+            // Get the current location
+            let currentLocation = await Location.getCurrentPositionAsync({});
+            setLocation(currentLocation);
+
+            // Extract latitude and longitude
+            const lat = currentLocation.coords.latitude;
+            const lon = currentLocation.coords.longitude;
+            setLatitude(lat);
+            setLongitude(lon);
+
+            console.log(`Latitude: ${lat}, Longitude: ${lon}`);
+
+            // Fetch UV index using latitude and longitude
+            const uvData = await getUVIndex(lat, lon);
+            setUvIndex(uvData);
+        } catch (error) {
+            console.error("Error fetching location or UV index:", error);
         }
-        let currentLocation = await Location.getCurrentPositionAsync({});
-        setLocation(currentLocation);
-        console.log("Location: ");
-        console.log(currentLocation);
-      };
-      getPermissions();
-
-      //fetch Uv index from service
-      const fetchUvIndex = async ()=> {
-        const uvData=await getUVIndex(mockLocation.latitude, mockLocation.longitude);
-          setUvIndex(uvData); 
-      };
-
-      fetchUvIndex();
+    };
+      getPermissionsAndUVIndex();
     }, []);
     
 
@@ -51,6 +62,11 @@ export default function Index() {
         <View style={[styles.container, {paddingTop:safeTop}]}>
             {/* Header component */}
             <Header/>
+            {/* Location component */}
+            <Text style={styles.text}>
+            Latitude: {latitude ? latitude.toFixed(2) : "Loading..."}
+             | Longitude: {longitude ? longitude.toFixed(2) : "Loading..."}
+            </Text>
             {/* UV Index component */}
             <UVHome uvIndex={uvIndex}/>
             {/* Home Screen Text */}
