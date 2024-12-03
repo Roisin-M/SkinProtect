@@ -3,15 +3,20 @@ import React from 'react'
 import { Colors } from '@/constants/Colors';
 
 type Props = {
-    uvIndex: number;
+    uvIndex: number | null;
 };
 
 const UVHome = ({uvIndex}: Props) => {
-    const uvTextColor = getUVColor(uvIndex);
+  //if statement to display neutral colour if null
+    const uvTextColor = uvIndex !== null?
+     getUVColor(uvIndex) 
+     : Colors.softText;
   return (
     <View style={styles.container}>
       <Text style={styles.title}>UV Index</Text>
-      <Text style={[styles.uvValue, {color: uvTextColor}]}>{uvIndex}</Text>
+      <Text style={[styles.uvValue, {color: uvTextColor}]}>
+         {uvIndex !== null ? uvIndex.toFixed(1) : "Loading..."}</Text>
+         {/* toFixed round to 1 dp */}
     </View>
   );
 };

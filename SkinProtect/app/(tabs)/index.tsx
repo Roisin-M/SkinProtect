@@ -21,9 +21,7 @@ useEffect(()=>{
   //fetch Uv index from service
   const fetchUvIndex = async ()=> {
     const uvData=await getUVIndex(mockLocation.latitude, mockLocation.longitude);
-    if(uvData){
-      setUvIndex(uvData.value); //assuming 'value' is the uv index fields in the response
-    }
+      setUvIndex(uvData); 
   };
   fetchUvIndex();
 }, []);
@@ -32,12 +30,7 @@ useEffect(()=>{
     <View style={[styles.container, {paddingTop:safeTop}]}>
       <Header/>
       <View style={styles.content}>
-        {/* Render UVContainer only when uvIndex is available */}
-        {uvIndex !== null ? (
           <UVHome uvIndex={uvIndex} />
-        ) : (
-          <Text style={styles.loadingText}>Loading UV Index...</Text>
-        )}
       </View>
     </View>
   )
@@ -53,11 +46,5 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-  },
-  loadingText: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "#555",
-    marginVertical: 16,
   },
 })
