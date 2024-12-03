@@ -4,7 +4,7 @@ import TabBarButton from "@/components/TabBarButton";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useState } from "react";
 import { Colors } from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
+import SunExposureScreen from '../app/SunExposureScreen';
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const [dimensions, setDimensions] = useState({ height: 20, width: 100 });
@@ -73,12 +73,11 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         return (
           <TabBarButton
             key={route.name}
+            onPress={onPress}
             onLongPress={onLongPress}
             isFocused={isFocused}
             routeName={route.name}
-            label="Sun Exposure"
-            icon={<Ionicons name="sunny-outline" size={24} color="black" />}
-            onPress={() => navigation('SunExposure')}
+            label={label}
           />
         );
       })}

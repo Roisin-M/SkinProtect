@@ -1,51 +1,40 @@
-// Input component for the sun exposure time
-import React, { useState } from 'react';
-import { TextInput, StyleSheet, Text, View, Button } from 'react-native';
+import React from "react";
+import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";  // Make sure you have this dependency
 
-type SunExposureProps = {
-  onSubmit: (exposureTime: string) => void; // Function to handle the submission
-};
+const SunExposure = () => {
+  const navigation = useNavigation();
 
-const SunExposure = ({ onSubmit }: SunExposureProps) => {
-  const [exposureTime, setExposureTime] = useState('');
-
-  const handleSubmit = () => {
-    onSubmit(exposureTime); // Pass the value back to the parent screen
+  // Function to navigate to the SunExposure screen when clicked
+  const goToSunExposureScreen = () => {
+    navigation.navigate('SunExposureScreen'); // Make sure "SunExposure" matches the name of the screen in your navigator
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>How long do you plan to be in the sun?</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter time in hours"
-        value={exposureTime}
-        onChangeText={setExposureTime}
-        keyboardType="numeric"
-      />
-      <Button title="Submit" onPress={handleSubmit} />
+      {/* TouchableOpacity for Sun Exposure button */}
+      <TouchableOpacity onPress={goToSunExposureScreen} style={styles.button}>
+        <Text style={styles.text}>Sun Exposure</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
   },
-  title: {
-    fontSize: 18,
-    marginBottom: 10,
+  button: {
+    backgroundColor: "#FFCC00", // Color for Sun Exposure button
+    padding: 10,
+    borderRadius: 5,
   },
-  input: {
-    width: '80%',
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    paddingLeft: 10,
-    marginBottom: 20,
+  text: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

@@ -3,6 +3,8 @@ import React from "react";
 import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import Animated ,{ FadeInDown, FadeInRight } from "react-native-reanimated";
+import SunExposure from "@/components/SunExposure";
+
 
 const Page = () => {
   const router = useRouter();
