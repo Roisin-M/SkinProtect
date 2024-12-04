@@ -4,6 +4,7 @@ import React, {useState} from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import skinQuizQuestions from '@/assets/json/skinQuizQuestions.json'
 import { useRouter } from 'expo-router';
+import { Colors } from '@/constants/colors';
 
 export default function SkinQuizScreen() {
   // Use the safe area insets
@@ -92,10 +93,10 @@ export default function SkinQuizScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#25292e',
+    backgroundColor: Colors.darkBackground,
     justifyContent: 'center',
     alignItems: 'center',
-    width:'100%'
+    width:'100%',
   },
   quizContainer: {
     flex: 1,
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   question: {
-    color: '#fff',
+    color: Colors.white,
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 20,
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   option: {
-    backgroundColor: '#3b3f47',
+    backgroundColor: Colors.background,
     borderRadius: 8,
     marginBottom: 10,
     width: 300, 
@@ -132,11 +133,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   optionText: {
-    color: '#fff',
+    color: Colors.darkBackground,
     fontSize: 16,
   },
   progress: {
-    color: '#fff',
+    color: Colors.white,
     fontSize: 14,
     marginTop: 20,
   },
