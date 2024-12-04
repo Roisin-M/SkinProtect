@@ -42,20 +42,21 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
+    fontSize: 16,
+    fontWeight:"600",
+    marginBottom: 8,
 
   },
   description: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: 8,
   },
   button: {
-    backgroundColor: '#007BFF',
-    padding: 12,
-    borderRadius: 5,
+    backgroundColor: Colors.blue,
+    paddingVertical: 12,
+    paddingHorizontal: 5,
+    borderRadius: 10,
   },
   buttonText: {
     color: '#fff',

@@ -34,11 +34,10 @@ export default SkinQuiz
 
 const styles = StyleSheet.create({
     container:{
-        marginLeft: 20,
         justifyContent: 'center',
         alignItems:'center',
         backgroundColor: Colors.background, // Use a contrasting background color
-        marginBottom:20,
+        margin: 16,
         height: '15%',
         width:'90%',
         borderRadius: 10,
