@@ -4,9 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import UVHome from '@/components/UVHome';
 import { getUVIndex } from '@/services/OpenWeatherService';
 //location imports
-import * as Location from 'expo-location';
 import LocationHome from '@/components/LocationHome';
-=======
 import Header from '@/components/BuddyHeader'
 import SkinQuiz from '@/components/SkinQuizComponent';
 
