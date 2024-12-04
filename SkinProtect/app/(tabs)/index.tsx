@@ -1,6 +1,8 @@
 import { ActivityIndicator, Text, View,  StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import SunExposure from "@/components/SunExposure";
+import SunExposureScreen from '../SunExposureScreen';
 import UVHome from '@/components/UVHome';
 import { getUVIndex } from '@/services/OpenWeatherService';
 //location imports
@@ -29,7 +31,7 @@ export default function Index() {
     return (
         <View style={[styles.container, {paddingTop:safeTop}]}>
             {/* Header component */}
-            <Header/>
+            <Header/> 
              {/* Location Component */}
             <LocationHome onLocationUpdate={handleLocationUpdate} />
             {/* UV Index component */}
@@ -38,6 +40,8 @@ export default function Index() {
             <Text style={styles.text}>Home screen</Text>  
             {/* Skin Quiz Component */}
             <SkinQuiz/>
+             {/*Sun Exposure Component*/}
+            <SunExposure /> 
         </View>
     );
 }
