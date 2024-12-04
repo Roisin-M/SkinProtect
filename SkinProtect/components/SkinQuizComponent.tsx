@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.background, // Use a contrasting background color
         margin: 16,
         height: '15%',
-        width:'90%',
+        // width:'90%',
         borderRadius: 10,
         elevation: 5, // Add shadow for Android (optional)
         shadowColor: '#000', // Add shadow for iOS (optional)
