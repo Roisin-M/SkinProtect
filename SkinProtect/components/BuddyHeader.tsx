@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
-import { Colors } from '@/constants/colors'
+import { Colors } from '@/constants/Colors'
 
 type Props = {}
 

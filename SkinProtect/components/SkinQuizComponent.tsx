@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native'
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
-import { Colors } from '@/constants/colors'
+import { Colors } from '@/constants/Colors'
 import { DarkTheme } from '@react-navigation/native'
 import { useRouter, useLocalSearchParams } from 'expo-router'
 

@@ -6,7 +6,7 @@ import { getUVIndex } from '@/services/OpenWeatherService';
 //location imports
 import * as Location from 'expo-location';
 import LocationHome from '@/components/LocationHome';
-=======
+
 import Header from '@/components/BuddyHeader'
 import SkinQuiz from '@/components/SkinQuizComponent';
 
