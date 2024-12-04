@@ -35,31 +35,26 @@ export default SkinQuiz
 const styles = StyleSheet.create({
     container:{
         justifyContent: 'center',
-        alignItems:'center',
-        backgroundColor: Colors.background, // Use a contrasting background color
+        //alignItems:'center',
+        backgroundColor: Colors.background, 
         margin: 16,
         height: '15%',
         width:'90%',
         borderRadius: 10,
-        elevation: 5, // Add shadow for Android (optional)
-        shadowColor: '#000', // Add shadow for iOS (optional)
-        shadowOffset: { width: 0, height: 2 }, // Add shadow for iOS (optional)
-        shadowOpacity: 0.2, // Add shadow for iOS (optional)
-        shadowRadius: 2, // Add shadow for iOS (optional)
      },
      quizBlock:{
          flexDirection:'column',
-         alignItems:'center',
+         //alignItems:'center',
          justifyContent: 'center',
          gap:10,
-         padding: 20, // Add some padding around the quizBlock
+         padding: 20, 
          width: '100%',
      },
      text:{
-         fontSize:16,
-         color:Colors.black,
-         fontWeight:'400',
-         textAlign: 'center',
+         fontSize: 16,
+         fontWeight: "600",
+         color: Colors.softText,
+         textAlign: 'left',
      },
      button: {
         borderRadius: 10,
@@ -67,6 +62,9 @@ const styles = StyleSheet.create({
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+
         //flexDirection: 'row',
         backgroundColor: Colors.blue,
      },

@@ -43,13 +43,15 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight:"600",
+    fontWeight: "600",
+    color: Colors.softText,
     marginBottom: 8,
 
   },
   description: {
     fontSize: 16,
     textAlign: 'center',
+    color: Colors.softText,
     marginBottom: 8,
   },
   button: {

@@ -5,7 +5,7 @@
       "options": [
         { "text": "Light Blue, Grey, or Green", "score": 0 },
         { "text": "Blue, Grey, or Green", "score": 1 },
-        { "text": "Brown", "score": 2 },
+        { "text": "Green/Brown, Brown", "score": 2 },
         { "text": "Dark Brown or Black", "score": 3 }
       ]
     },
