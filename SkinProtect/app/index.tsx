@@ -29,6 +29,8 @@ const Page = () => {
       </ImageBackground>
     </View>
     //separate view so that the text appears above the image within the view
+    
+ 
   );
 };
 
