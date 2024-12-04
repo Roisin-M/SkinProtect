@@ -1,21 +1,70 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { Colors } from '@/constants/colors'
+import * as Location from 'expo-location'
 
-type Props = {}
+type Props = {
+    onLocationUpdate: (latitude: number, longitude: number) => void; // Callback to update latitude and longitude
+}
+const LocationHome = ({onLocationUpdate, }: Props) => {
+    const [currentRegion, setCurrentRegion] = useState<string | null>(null); // State to store region name
+    const handleAutoLocation = async () => {
+        try {
+          // Request location permissions
+          const { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== "granted") {
+            alert("Permission to access location was denied.");
+            return;
+          }
+          alert("permission granted");
 
-const LocationHome = (props: Props) => {
+          // Get current location
+          let currentLocation = await Location.getCurrentPositionAsync({});
+
+          const lat = currentLocation.coords.latitude;
+          const lon = currentLocation.coords.longitude;
+
+          const reversegeoCodedAddress = await Location.reverseGeocodeAsync({
+            longitude: lon,
+            latitude: lat
+          });
+          console.log(`reverse geocodes to address`);
+          console.log(reversegeoCodedAddress);
+          console.log(`Latitude: ${lat}, Longitude: ${lon}`);
+
+          // Extract the region (e.g., "County Sligo")
+        if (reversegeoCodedAddress.length > 0) {
+            const region = reversegeoCodedAddress[0].region || 'Unknown Region';
+            setCurrentRegion(region);
+        } else {
+            setCurrentRegion('Unknown Region');
+        }
+          
+          // Pass latitude and longitude to the parent component
+          onLocationUpdate(lat, lon);
+        } catch (error) {
+          console.error("Error fetching location:", error);
+          alert("An error occurred while fetching location.");
+        }
+      };
+    
+      const handleManualLocation = () => {
+        alert("Manual location selection is not implemented yet.");
+      };
+
   return (
     <View style={styles.container}>
     {/* Display City Name */}
-    <Text style={styles.cityName}>Your City</Text>
+    <Text style={styles.cityName}>
+    {currentRegion ? `Your Region: ${currentRegion}` : 'Fetching Region...'}
+        </Text>
 
     {/* Buttons Side by Side */}
     <View style={styles.buttonContainer}>
-      <TouchableOpacity style={styles.btn} onPress={() => console.log('Auto-location')}>
+      <TouchableOpacity style={styles.btn} onPress={handleAutoLocation}>
         <Text style={styles.btnText}>Auto-Location</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.btn} onPress={() => console.log('Manual location')}>
+      <TouchableOpacity style={styles.btn} onPress={handleManualLocation}>
         <Text style={styles.btnText}>Manual Location</Text>
       </TouchableOpacity>
     </View>
