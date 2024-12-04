@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { Colors } from '@/constants/Colors'
+import { Colors } from '@/constants/colors'
 import * as Location from 'expo-location'
 
 type Props = {

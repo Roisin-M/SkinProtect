@@ -35,9 +35,7 @@ export default function Index() {
              {/* Location Component */}
             <LocationHome onLocationUpdate={handleLocationUpdate} />
             {/* UV Index component */}
-            <UVHome uvIndex={uvIndex}/>
-            {/* Home Screen Text */}
-            <Text style={styles.text}>Home screen</Text>  
+            <UVHome uvIndex={uvIndex}/> 
             {/* Skin Quiz Component */}
             <SkinQuiz/>
              {/*Sun Exposure Component*/}

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native'
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
-import { Colors } from '@/constants/Colors'
+import { Colors } from '@/constants/colors'
 import { DarkTheme } from '@react-navigation/native'
 import { useRouter, useLocalSearchParams } from 'expo-router'
 
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         justifyContent: 'center',
         alignItems:'center',
-        backgroundColor: Colors.lightGrey, // Use a contrasting background color
+        backgroundColor: Colors.background, // Use a contrasting background color
         marginBottom:20,
         height: '15%',
         width:'90%',
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         //flexDirection: 'row',
-        backgroundColor: Colors.darkGrey,
+        backgroundColor: Colors.blue,
      },
      btnLabel: {
         color: '#fff',

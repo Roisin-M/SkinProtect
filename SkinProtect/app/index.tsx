@@ -1,7 +1,7 @@
 import { ImageBackground, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { useRouter } from "expo-router";
-import { Colors } from "@/constants/Colors";
+import { Colors } from "@/constants/colors";
 import Animated ,{ FadeInDown, FadeInRight } from "react-native-reanimated";
 
 const Page = () => {
