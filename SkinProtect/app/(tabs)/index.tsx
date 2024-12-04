@@ -8,6 +8,7 @@ import UVHome from '@/components/UVHome';
 import { getUVIndex } from '@/services/OpenWeatherService';
 //location imports
 import * as Location from 'expo-location';
+import LocationHome from '@/components/LocationHome';
 
 export default function Index() {
     // Use the safe area insets
@@ -63,10 +64,7 @@ export default function Index() {
             {/* Header component */}
             <Header/>
             {/* Location component */}
-            <Text style={styles.text}>
-            Latitude: {latitude ? latitude.toFixed(2) : "Loading..."}
-             | Longitude: {longitude ? longitude.toFixed(2) : "Loading..."}
-            </Text>
+            <LocationHome/>
             {/* UV Index component */}
             <UVHome uvIndex={uvIndex}/>
             {/* Home Screen Text */}

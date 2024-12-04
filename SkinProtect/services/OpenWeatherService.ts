@@ -9,8 +9,8 @@ export const getUVIndex = async (latitude: number, longitude: number) => {
         console.log('in response not okay - failed to fetch uv index');
       throw new Error("Failed to fetch UV Index");
     }
-    console.log('There is a uv response');
     const data = await response.json();
+    console.log('There is a uv response');
     //extract the UV index from the current object
     const uvIndex = data.current?.uvi || null;
     console.log(`data of uv index is returned from service getUVIndex : ${data}`);
