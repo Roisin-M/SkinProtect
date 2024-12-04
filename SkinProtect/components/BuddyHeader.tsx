@@ -5,7 +5,7 @@ import { Colors } from '@/constants/colors'
 
 type Props = {}
 
-const Header = (props: Props) => {
+const BuddyHeader = (props: Props) => {
   return (
     <View style={styles.container}>
         <View style={styles.userInfo}>
@@ -25,7 +25,7 @@ const Header = (props: Props) => {
   )
 }
 
-export default Header
+export default BuddyHeader
 
 const styles = StyleSheet.create({
     container:{

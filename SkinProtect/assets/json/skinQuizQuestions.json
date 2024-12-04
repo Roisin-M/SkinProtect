@@ -1,0 +1,150 @@
+[
+    {
+      "id": "1",
+      "question": "What is the color of your eyes?",
+      "options": [
+        { "text": "Light Blue, Grey, or Green", "score": 0 },
+        { "text": "Blue, Grey, or Green", "score": 1 },
+        { "text": "Brown", "score": 2 },
+        { "text": "Dark Brown or Black", "score": 3 }
+      ]
+    },
+    {
+      "id": "2",
+      "question": "What is the natural color of your hair?",
+      "options": [
+        { "text": "Red", "score": 0 },
+        { "text": "Blonde", "score": 1 },
+        { "text": "Brown", "score": 2 },
+        { "text": "Black", "score": 3 }
+      ]
+    },
+    {
+      "id": "3",
+      "question": "How does your skin react to sun exposure?",
+      "options": [
+        { "text": "Always burns, never tans", "score": 0 },
+        { "text": "Burns easily, tans minimally", "score": 1 },
+        { "text": "Sometimes burns, tans uniformly", "score": 2 },
+        { "text": "Rarely burns, tans well", "score": 3 }
+      ]
+    },
+    {
+        "id": "4",
+        "question": "Do you have freckles on sun-exposed areas?",
+        "options": [
+          { "text": "Yes, many", "score": 0 },
+          { "text": "A few", "score": 1 },
+          { "text": "None", "score": 2 }
+        ]
+      },
+      {
+        "id": "5",
+        "question": "How does your face react to the sun?",
+        "options": [
+          { "text": "Always red", "score": 0 },
+          { "text": "Sometimes red", "score": 1 },
+          { "text": "Rarely red", "score": 2 },
+          { "text": "Never red", "score": 3 }
+        ]
+      },
+      {
+        "id": "6",
+        "question": "What happens to your skin after prolonged sun exposure?",
+        "options": [
+          { "text": "Blisters or severe burns", "score": 0 },
+          { "text": "Mild burns or peeling", "score": 1 },
+          { "text": "Tans slightly but no burns", "score": 2 },
+          { "text": "Tans deeply with no burns", "score": 3 }
+        ]
+      },
+      {
+        "id": "7",
+        "question": "What is the natural color of your skin in areas not exposed to the sun?",
+        "options": [
+          { "text": "Pale or milky white", "score": 0 },
+          { "text": "Light beige or cream", "score": 1 },
+          { "text": "Light to medium brown", "score": 2 },
+          { "text": "Dark brown to black", "score": 3 }
+        ]
+      },
+      {
+        "id": "8",
+        "question": "How sensitive is your skin to artificial UV light (e.g., tanning beds)?",
+        "options": [
+          { "text": "Extremely sensitive, burns quickly", "score": 0 },
+          { "text": "Sensitive, slight burns", "score": 1 },
+          { "text": "Tolerates well, tans gradually", "score": 2 },
+          { "text": "Very tolerant, tans quickly", "score": 3 }
+        ]
+      },
+      {
+        "id": "9",
+        "question": "Do you wear sunscreen regularly?",
+        "options": [
+          { "text": "Never", "score": 3 },
+          { "text": "Occasionally", "score": 2 },
+          { "text": "Often", "score": 1 },
+          { "text": "Always", "score": 0 }
+        ]
+      },
+      {
+        "id": "10",
+        "question": "How often are you exposed to direct sunlight for extended periods?",
+        "options": [
+          { "text": "Almost daily", "score": 3 },
+          { "text": "A few times a week", "score": 2 },
+          { "text": "Rarely", "score": 1 },
+          { "text": "Never", "score": 0 }
+        ]
+      },
+      {
+        "id": "11",
+        "question": "What is your ethnic background or ancestry?",
+        "options": [
+          { "text": "Northern European", "score": 0 },
+          { "text": "Southern European or Mediterranean", "score": 1 },
+          { "text": "Middle Eastern or South Asian", "score": 2 },
+          { "text": "African, East Asian, or Indigenous Australian", "score": 3 }
+        ]
+      },
+      {
+        "id": "12",
+        "question": "Does your family have a history of skin cancer or severe sun damage?",
+        "options": [
+          { "text": "Yes", "score": 0 },
+          { "text": "No", "score": 3 }
+        ]
+      },
+      {
+        "id": "13",
+        "question": "How does your skin age over time (e.g., wrinkles, sun spots)?",
+        "options": [
+          { "text": "Ages quickly", "score": 0 },
+          { "text": "Some visible aging", "score": 1 },
+          { "text": "Ages slowly", "score": 2 },
+          { "text": "Shows little to no aging", "score": 3 }
+        ]
+      },
+      {
+        "id": "14",
+        "question": "How long does it take your skin to recover from sunburn?",
+        "options": [
+          { "text": "Several days with peeling", "score": 0 },
+          { "text": "A few days, mild peeling", "score": 1 },
+          { "text": "Quickly, minimal redness", "score": 2 },
+          { "text": "Does not burn easily", "score": 3 }
+        ]
+      },
+      {
+        "id": "15",
+        "question": "How does your skin feel after being in the sun for a few hours?",
+        "options": [
+          { "text": "Very dry or tight", "score": 0 },
+          { "text": "Slightly dry", "score": 1 },
+          { "text": "Normal", "score": 2 },
+          { "text": "Oily or unaffected", "score": 3 }
+        ]
+      }
+  ]
+  
