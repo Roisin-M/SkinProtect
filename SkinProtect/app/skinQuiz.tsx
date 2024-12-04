@@ -2,7 +2,7 @@ import { Text, View, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react
 import CustomHeader from '@/components/BackHeader';
 import React, {useState} from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import skinQuizQuestions from '@/assets/json/skinQuizQuestions.json'
+import skinQuizQuestions from '@/assets/json/skinQuestions.json'
 import { useRouter } from 'expo-router';
 
 export default function SkinQuizScreen() {
