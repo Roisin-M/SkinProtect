@@ -1,13 +1,28 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { Colors } from '@/constants/colors'
 import * as Location from 'expo-location'
 
+type LocationType = {
+  name: string;
+  latitude: number;
+  longitude: number;
+};
+
 type Props = {
     onLocationUpdate: (latitude: number, longitude: number) => void; // Callback to update latitude and longitude
 }
-const LocationHome = ({onLocationUpdate, }: Props) => {
+const LocationHome = ({onLocationUpdate }: Props) => {
     const [currentRegion, setCurrentRegion] = useState<string | null>(null); // State to store region name
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    
+// Mock data for manual location selection
+const mockLocations: LocationType[] = [
+  { name: 'Dublin', latitude: 53.3498, longitude: -6.2603 },
+  { name: 'California', latitude: 36.7783, longitude: -119.4179 },
+  {name: 'Melbourne', latitude:-37.814, longitude:144.96332 },
+  { name:'Rio de Janeriro', latitude:-22.908333, longitude:-43.196388 },
+];
     const handleAutoLocation = async () => {
         try {
           // Request location permissions
@@ -40,7 +55,7 @@ const LocationHome = ({onLocationUpdate, }: Props) => {
             setCurrentRegion('Unknown Region');
         }
           
-          // Pass latitude and longitude to the parent component
+          // Pass latitude and longitude to parent 
           onLocationUpdate(lat, lon);
         } catch (error) {
           console.error("Error fetching location:", error);
@@ -48,27 +63,69 @@ const LocationHome = ({onLocationUpdate, }: Props) => {
         }
       };
     
-      const handleManualLocation = () => {
-        alert("Manual location selection is not implemented yet.");
+      const handleManualLocation = (selectedItem: LocationType) => {
+        console.log(`Manually selected location: ${selectedItem.name}, Latitude: ${selectedItem.latitude}, Longitude: ${selectedItem.longitude}`);
+        setCurrentRegion(selectedItem.name); // Update the displayed region name
+        onLocationUpdate(selectedItem.latitude, selectedItem.longitude); // Pass coordinates to parent
+        setIsDropdownOpen(false); // close the dropdown
       };
-
+    
   return (
     <View style={styles.container}>
-    {/* Display City Name */}
+    {/* Display Region Name */}
     <Text style={styles.cityName}>
     {currentRegion ? `Your Region: ${currentRegion}` : 'Fetching Region...'}
         </Text>
 
-    {/* Buttons Side by Side */}
+    {/* Auto Location Button */}
     <View style={styles.buttonContainer}>
       <TouchableOpacity style={styles.btn} onPress={handleAutoLocation}>
         <Text style={styles.btnText}>Auto-Location</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.btn} onPress={handleManualLocation}>
-        <Text style={styles.btnText}>Manual Location</Text>
-      </TouchableOpacity>
+
+      {/* Custom Dropdown */}
+      <TouchableOpacity
+          style={styles.dropdownButton}
+          onPress={() => setIsDropdownOpen(!isDropdownOpen)}
+        >
+          <Text style={styles.dropdownButtonText}>
+            {currentRegion || 'Select Location'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+ {/* Dropdown Modal */}
+ {isDropdownOpen && (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isDropdownOpen}
+          onRequestClose={() => setIsDropdownOpen(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.dropdownContainer}>
+              <FlatList
+                data={mockLocations}
+                keyExtractor={(item) => item.name}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.dropdownItem}
+                    onPress={() => handleManualLocation(item)}
+                  >
+                    <Text style={styles.dropdownItemText}>{item.name}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setIsDropdownOpen(false)}
+              >
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
-  </View>
   )
 }
 
@@ -118,5 +175,56 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '700',
       },
-      
+      dropdownButton: {
+        backgroundColor: Colors.blue,
+        borderRadius: 10,
+        paddingVertical: 12,
+        paddingHorizontal: 5,
+        alignItems: 'center',
+        flex: 1,
+        marginHorizontal: 5,
+      },
+      dropdownButtonText: {
+        color: Colors.white,
+        fontSize: 16,
+        textAlign: 'center',
+        fontWeight: '700',
+      },
+      modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',//opacity
+      },
+      dropdownContainer: {
+        width: '80%',
+        backgroundColor: Colors.white,
+        borderRadius: 10,
+        padding: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+      },
+      dropdownItem: {
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.lightGrey,
+      },
+      dropdownItemText: {
+        fontSize: 16,
+        color: Colors.black,
+      },
+      closeButton: {
+        marginTop: 10,
+        backgroundColor: Colors.blue,
+        paddingVertical: 10,
+        borderRadius: 8,
+        alignItems: 'center',
+      },
+      closeButtonText: {
+        color: Colors.white,
+        fontSize: 16,
+      },
 })
