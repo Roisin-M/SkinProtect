@@ -89,7 +89,7 @@ const mockLocations: LocationType[] = [
           onPress={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           <Text style={styles.dropdownButtonText}>
-            {currentRegion || 'Select Location'}
+            Manually Select
           </Text>
         </TouchableOpacity>
       </View>
