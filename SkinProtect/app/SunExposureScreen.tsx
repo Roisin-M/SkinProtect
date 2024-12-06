@@ -2,18 +2,30 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+
+type SunExposureScreenProps = {
+  onSubmit: (activity: string, timeSpent: string) => void;
+};
 
 const SunExposureScreen = () => {
   const [activity, setActivity] = useState('');
   const [timeSpent, setTimeSpent] = useState('');
+  const router = useRouter();
 
   const handleActivitySelect = (selectedActivity: string) => {
     setActivity(selectedActivity);
   };
 
   const handleSubmit = () => {
-    // Submit logic, maybe calculate sunscreen recommendations
-    console.log('Activity:', activity, 'Time:', timeSpent);
+    if (!activity || !timeSpent) {
+      alert('Please select an activity and enter the time spent.');
+      return;
+    }
+    router.push({
+      pathname: '/(tabs)',
+      params: { activity, timeSpent }, // Pass parameters to the main screen
+    });
   };
 
   return (

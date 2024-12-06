@@ -22,6 +22,7 @@ const mockLocations: LocationType[] = [
   { name: 'California', latitude: 36.7783, longitude: -119.4179 },
   {name: 'Melbourne', latitude:-37.814, longitude:144.96332 },
   { name:'Rio de Janeriro', latitude:-22.908333, longitude:-43.196388 },
+  { name: 'Mexico City', latitude:19.432608, longitude:-99.133209 },
 ];
     const handleAutoLocation = async () => {
         try {
@@ -87,7 +88,7 @@ const mockLocations: LocationType[] = [
       <TouchableOpacity
           style={styles.dropdownButton}
           onPress={() => setIsDropdownOpen(!isDropdownOpen)}
-        >
+        > 
           <Text style={styles.dropdownButtonText}>
             Manually Select
           </Text>

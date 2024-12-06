@@ -1,19 +1,27 @@
 //Sun Exposure Component file
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/colors';
 
-type Props = {}
+const SunExposure = () => {
+  const router = useRouter();
+  const { activity, timeSpent } = useLocalSearchParams(); // Retrieve passed parameters
 
-const SunExposure = (props: Props) => {
-const router = useRouter();
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sun Exposure</Text>
       <Text style={styles.description}>
-        Let's assess your sun exposure today. We need to know what activity you'll be doing and for how long.
+        Let's assess your sun exposure today.
       </Text>
+      {activity && timeSpent ? (
+        <View>
+          <Text style={styles.infoText}>Activity: {activity}</Text>
+          <Text style={styles.infoText}>Time Spent: {timeSpent} minutes</Text>
+        </View>
+      ) : (
+        <Text style={styles.placeholderText}>Submit your activity and time spent above.</Text>
+      )}
       <Pressable
         style={styles.button}
         onPress={() => router.push("/SunExposureScreen")}
@@ -59,11 +67,22 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 5,
     borderRadius: 10,
+    marginTop:5,
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
     textAlign: 'center',
+  },
+  infoText: {
+    fontSize: 16,
+    color: Colors.black,
+    textAlign: 'center',
+  },
+  placeholderText: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    color: Colors.softText,
   },
 });
 
