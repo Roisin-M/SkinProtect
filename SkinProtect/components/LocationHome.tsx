@@ -23,6 +23,7 @@ const mockLocations: LocationType[] = [
   {name: 'Melbourne', latitude:-37.814, longitude:144.96332 },
   { name:'Rio de Janeriro', latitude:-22.908333, longitude:-43.196388 },
   { name: 'Mexico City', latitude:19.432608, longitude:-99.133209 },
+  { name: 'Hawaii', latitude: 19.741755, longitude: -155.844437 },
 ];
     const handleAutoLocation = async () => {
         try {
