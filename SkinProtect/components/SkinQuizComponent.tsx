@@ -1,15 +1,29 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native'
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { Colors } from '@/constants/colors'
 import { DarkTheme } from '@react-navigation/native'
 import { useRouter, useLocalSearchParams } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Props = {}
 
 const SkinQuiz = (props: Props) => {
     const router = useRouter(); //initialize the router
-    const { skinType } = useLocalSearchParams(); //get the result from query
+    //const { skinType } = useLocalSearchParams(); //get the result from query
+    const [skinType, setSkinType] = useState<string | null>(null);
+
+    useEffect(() => {
+        //load stored skin type when component mounts
+        const loadSkinType = async () => {
+            const storedSkinType = await AsyncStorage.getItem('skinType');
+            if (storedSkinType) {
+                setSkinType(storedSkinType);
+            }
+        };
+
+        loadSkinType();
+    }, []);
 
     return (
         <View style={styles.container}>

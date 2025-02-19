@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import skinQuizQuestions from '@/assets/json/skinQuizQuestions.json'
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SkinQuizScreen() {
   // Use the safe area insets
@@ -18,27 +19,54 @@ export default function SkinQuizScreen() {
   const [totalScore, setTotalScore] = useState(0);
 
   //method to calculate answer points to determine the skin type
-  const handleOptionPress = (score: number) => {
-    setTotalScore(totalScore+score);
+  // const handleOptionPress = (score: number) => {
+  //   //setTotalScore(totalScore+score);
+  //   const newTotalScore = totalScore + score;
 
-    //check if it is the last question
+  //   //check if it is the last question
+  //   if (currentQuestionIndex < skinQuizQuestions.length - 1) {
+  //     setTotalScore(newTotalScore);
+  //     setCurrentQuestionIndex(currentQuestionIndex + 1);
+  //   } else {
+  //     //determine Fitzpatrick scale result
+  //     const result = determineSkinType(newTotalScore);
+      
+  //     // Alert.alert('Quiz Completed', `Your skin type is: ${result}`, [
+  //     //   { 
+  //     //     text: 'OK', 
+  //     //     onPress: () => {
+  //     //       router.push({
+  //     //         pathname:'/(tabs)',
+  //     //         params: {skinType: result }, //pass the skintype result as parameter
+  //     //       })
+  //     //     } 
+  //     //   },
+  //     // ]);
+
+  //     //navigate to the previous page with the skin type result
+  //     router.push({
+  //       pathname: '/(tabs)',
+  //       params: { skinType: result }, //Pass the skin type result as a parameter
+  //     })
+  //   }
+  // };
+
+  const handleOptionPress = async (score : number) => {
+    const newTotalScore = totalScore + score;
+
     if (currentQuestionIndex < skinQuizQuestions.length - 1) {
+      setTotalScore(newTotalScore);
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      //determine Fitzpatrick scale result
-      const result = determineSkinType(totalScore + score);
-      Alert.alert('Quiz Completed', `Your skin type is: ${result}`, [
-        { 
-          text: 'OK', 
-          onPress: () => {
-            router.push({
-              pathname:'/(tabs)',
-              params: {skinType: result }, //pass the skintype result as parameter
-            })
-          } 
-        },
-      ]);
+      const result = determineSkinType(newTotalScore);
+  
+      // Save result in AsyncStorage
+      await AsyncStorage.setItem('skinType', result);
+  
+      // Navigate back to tabs screen
+      router.push('/(tabs)');
     }
+    
   };
 
   const determineSkinType = (score: number) => {
