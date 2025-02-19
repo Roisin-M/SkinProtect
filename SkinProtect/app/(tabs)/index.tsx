@@ -9,6 +9,8 @@ import { getUVIndex } from '@/services/OpenWeatherService';
 import LocationHome from '@/components/LocationHome';
 import Header from '@/components/BuddyHeader'
 import SkinQuiz from '@/components/SkinQuizComponent';
+//import for storage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Index() {
   // Use the safe area insets
