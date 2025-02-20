@@ -18,7 +18,6 @@ export default function Index() {
       // States for UV index and location
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
-  const [region, setRegion] = useState<string|null>(null);
   const [uvIndex, setUvIndex] = useState<number | null>(null);
 
   // load location + uv from storage
@@ -28,12 +27,10 @@ export default function Index() {
         const storedLat = await AsyncStorage.getItem('latitude');
         const storedLon = await AsyncStorage.getItem('longitude');
         const storedUV = await AsyncStorage.getItem('uvIndex');
-        const storedRegion = await AsyncStorage.getItem('region');
 
         // Convert back to numbers if they exist
         if (storedLat) setLatitude(parseFloat(storedLat))
         if (storedLon) setLongitude(parseFloat(storedLon))
-        if (storedRegion) setRegion(storedRegion)
         if (storedUV) setUvIndex(parseFloat(storedUV))
       } catch (error) {
         console.warn('Error loading location/UV from AsyncStorage:', error)
@@ -43,14 +40,12 @@ export default function Index() {
   }, [])
     
 // Whenever lat/lon changes, fetch UV and persist
-const handleLocationUpdate = async (lat: number, lon: number, regionName: string) => {
+const handleLocationUpdate = async (lat: number, lon: number) => {
   try {
     setLatitude(lat)
     setLongitude(lon)
-    setRegion(regionName)
     await AsyncStorage.setItem('latitude', String(lat))
     await AsyncStorage.setItem('longitude', String(lon))
-    await AsyncStorage.setItem('region', regionName);
 
     const uvData = await getUVIndex(lat, lon)
     setUvIndex(uvData)
@@ -70,8 +65,7 @@ const handleLocationUpdate = async (lat: number, lon: number, regionName: string
             <Header/> 
              {/* Location Component */}
             <LocationHome 
-            onLocationUpdate={handleLocationUpdate}
-            region={region} />
+            onLocationUpdate={handleLocationUpdate} />
             {/* UV Index component */}
             <UVHome uvIndex={uvIndex}/> 
             {/* Skin Quiz Component */}

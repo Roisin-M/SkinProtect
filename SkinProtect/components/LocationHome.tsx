@@ -11,10 +11,9 @@ type LocationType = {
 };
 
 type Props = {
-    onLocationUpdate: (latitude: number, longitude: number, regionName: string) => void; // Callback to update latitude and longitude
-    region: string|null;
+    onLocationUpdate: (latitude: number, longitude: number) => void; // Callback to update latitude and longitude
 }
-const LocationHome = ({onLocationUpdate, region }: Props) => {
+const LocationHome = ({onLocationUpdate}: Props) => {
     const [currentRegion, setCurrentRegion] = useState<string | null>(null); // State to store region name
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     
@@ -68,7 +67,7 @@ const mockLocations: LocationType[] = [
           console.log(`Latitude: ${lat}, Longitude: ${lon}`);
 
           // Extract the region (e.g., "County Sligo")
-          let regionName='Unknown Region'
+          let regionName='';
         if (reversegeoCodedAddress.length > 0) {
             regionName = reversegeoCodedAddress[0].region || 'Unknown Region';
             setCurrentRegion(regionName);
@@ -78,7 +77,7 @@ const mockLocations: LocationType[] = [
           await AsyncStorage.setItem('region', regionName)
 
           // Pass latitude and longitude to parent 
-          onLocationUpdate(lat, lon, regionName);
+          onLocationUpdate(lat, lon);
         } catch (error) {
           console.error("Error fetching location:", error);
           alert("An error occurred while fetching location.");
@@ -90,7 +89,7 @@ const mockLocations: LocationType[] = [
         setCurrentRegion(selectedItem.name); // Update the displayed region name
         // Save region to AsyncStorage
         await AsyncStorage.setItem('region', selectedItem.name)
-        onLocationUpdate(selectedItem.latitude, selectedItem.longitude, selectedItem.name); // Pass coordinates to parent
+        onLocationUpdate(selectedItem.latitude, selectedItem.longitude); // Pass coordinates to parent
         setIsDropdownOpen(false); // close the dropdown
       };
     
