@@ -21,21 +21,38 @@ export async function calculateSPF(uvIndex: number, skinTypeString: string): Pro
       case 'low':
         // UV 1-2
         // Skin types 1–3 => SPF 10, types 4–6 => SPF 6
-        if (skinType >= 1 && skinType <= 3) return 10;
-        return 6; // for types 4–6
+        if (skinType >= 1 && skinType <= 3) {
+            return 10;
+        }
+        else{
+
+            return 6; // for types 4–6
+        }
   
       case 'moderate':
         // UV 3–5
         // Skin type 1–2 => 25, type 3–4 => 20, type 5–6 => 15
-        if (skinType === 1 || skinType === 2) return 25;
-        if (skinType === 3 || skinType === 4) return 20;
-        return 15; // 5 or 6
+        if (skinType === 1 || skinType === 2) 
+            {return 25;}
+        if (skinType === 3 || skinType === 4) 
+        {
+            return 20;
+        }
+        else{
+
+            return 15; // 5 or 6
+        }
   
       case 'high':
         // UV 6–7
         // Skin type 1–3 => 50, type 4–6 => 30
-        if (skinType >= 1 && skinType <= 3) return 50;
-        return 30; // 4–6
+        if (skinType >= 1 && skinType <= 3){
+        return 50;
+        }
+            else{
+
+                return 30; // 4–6
+            }
   
       case 'extreme':
         // UV 8–10, 11+
