@@ -1,12 +1,28 @@
 //Sun Exposure Component file
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SunExposure = () => {
   const router = useRouter();
-  const { activity, timeSpent } = useLocalSearchParams(); // Retrieve passed parameters
+  //const { activity, timeSpent } = useLocalSearchParams(); // Retrieve passed parameters
+    // Local states to show what we loaded
+    const [activity, setActivity] = useState<string | null>(null)
+    const [timeSpent, setTimeSpent] = useState<string | null>(null)
+
+
+    useEffect(() => {
+      // On mount, retrieve from AsyncStorage
+      const loadData = async () => {
+        const storedActivity = await AsyncStorage.getItem('activity')
+        const storedTimeSpent = await AsyncStorage.getItem('timeSpent')
+        if (storedActivity) setActivity(storedActivity)
+        if (storedTimeSpent) setTimeSpent(storedTimeSpent)
+      }
+      loadData()
+    }, [])
 
   return (
     <View style={styles.container}>

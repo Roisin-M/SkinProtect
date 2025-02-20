@@ -16,26 +16,62 @@ export default function Index() {
   // Use the safe area insets
   const { top: safeTop } = useSafeAreaInsets();
       // States for UV index and location
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [region, setRegion] = useState<string|null>(null);
   const [uvIndex, setUvIndex] = useState<number | null>(null);
-    
-  const handleLocationUpdate = async (latitude: number, longitude: number) => {
-    try {
-      // Fetch UV index using the new location
-      const uvData = await getUVIndex(latitude, longitude);
-      setUvIndex(uvData);
-      console.log(`Updated UV Index: ${uvData}`);
-    } catch (error) {
-      console.error("Error fetching UV index:", error);
-    }
 
-  };
+  // load location + uv from storage
+  useEffect(() => {
+    const loadPersistedData = async () => {
+      try {
+        const storedLat = await AsyncStorage.getItem('latitude');
+        const storedLon = await AsyncStorage.getItem('longitude');
+        const storedUV = await AsyncStorage.getItem('uvIndex');
+        const storedRegion = await AsyncStorage.getItem('region');
+
+        // Convert back to numbers if they exist
+        if (storedLat) setLatitude(parseFloat(storedLat))
+        if (storedLon) setLongitude(parseFloat(storedLon))
+        if (storedRegion) setRegion(storedRegion)
+        if (storedUV) setUvIndex(parseFloat(storedUV))
+      } catch (error) {
+        console.warn('Error loading location/UV from AsyncStorage:', error)
+      }
+    }
+    loadPersistedData()
+  }, [])
+    
+// Whenever lat/lon changes, fetch UV and persist
+const handleLocationUpdate = async (lat: number, lon: number, regionName: string) => {
+  try {
+    setLatitude(lat)
+    setLongitude(lon)
+    setRegion(regionName)
+    await AsyncStorage.setItem('latitude', String(lat))
+    await AsyncStorage.setItem('longitude', String(lon))
+    await AsyncStorage.setItem('region', regionName);
+
+    const uvData = await getUVIndex(lat, lon)
+    setUvIndex(uvData)
+
+    // Optionally also store uvIndex so we can show it even before re-fetch
+    if (uvData !== null) {
+      await AsyncStorage.setItem('uvIndex', String(uvData))
+    }
+  } catch (error) {
+    console.error('Error setting location/UV data:', error)
+  }
+}
     
     return (
         <View style={[styles.container, {paddingTop:safeTop}]}>
             {/* Header component */}
             <Header/> 
              {/* Location Component */}
-            <LocationHome onLocationUpdate={handleLocationUpdate} />
+            <LocationHome 
+            onLocationUpdate={handleLocationUpdate}
+            region={region} />
             {/* UV Index component */}
             <UVHome uvIndex={uvIndex}/> 
             {/* Skin Quiz Component */}

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type SunExposureScreenProps = {
   onSubmit: (activity: string, timeSpent: string) => void;
@@ -17,15 +18,23 @@ const SunExposureScreen = () => {
     setActivity(selectedActivity);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!activity || !timeSpent) {
       alert('Please select an activity and enter the time spent.');
       return;
     }
-    router.push({
-      pathname: '/(tabs)',
-      params: { activity, timeSpent }, // Pass parameters to the main screen
-    });
+
+     // Store both in AsyncStorage
+     await AsyncStorage.setItem('activity', activity)
+     await AsyncStorage.setItem('timeSpent', timeSpent)
+ 
+     // Then just go back to the tabs. No need for query params now.
+     router.push('/(tabs)')
+
+    // router.push({
+    //   pathname: '/(tabs)',
+    //   params: { activity, timeSpent }, // Pass parameters to the main screen
+    // });
   };
 
   return (

@@ -1,7 +1,8 @@
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Colors } from '@/constants/colors'
 import * as Location from 'expo-location'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 type LocationType = {
   name: string;
@@ -10,12 +11,28 @@ type LocationType = {
 };
 
 type Props = {
-    onLocationUpdate: (latitude: number, longitude: number) => void; // Callback to update latitude and longitude
+    onLocationUpdate: (latitude: number, longitude: number, regionName: string) => void; // Callback to update latitude and longitude
+    region: string|null;
 }
-const LocationHome = ({onLocationUpdate }: Props) => {
+const LocationHome = ({onLocationUpdate, region }: Props) => {
     const [currentRegion, setCurrentRegion] = useState<string | null>(null); // State to store region name
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     
+    // 1) Load region from AsyncStorage
+    useEffect(() => {
+      const loadRegion = async () => {
+        try {
+          const storedRegion = await AsyncStorage.getItem('region')
+          if (storedRegion) {
+            setCurrentRegion(storedRegion)
+          }
+        } catch (error) {
+          console.error('Error loading region from AsyncStorage:', error)
+        }
+      }
+      loadRegion()
+    }, [])
+
 // Mock data for manual location selection
 const mockLocations: LocationType[] = [
   { name: 'Dublin', latitude: 53.3498, longitude: -6.2603 },
@@ -25,6 +42,7 @@ const mockLocations: LocationType[] = [
   { name: 'Mexico City', latitude:19.432608, longitude:-99.133209 },
   { name: 'Hawaii', latitude: 19.741755, longitude: -155.844437 },
 ];
+
     const handleAutoLocation = async () => {
         try {
           // Request location permissions
@@ -50,25 +68,29 @@ const mockLocations: LocationType[] = [
           console.log(`Latitude: ${lat}, Longitude: ${lon}`);
 
           // Extract the region (e.g., "County Sligo")
+          let regionName='Unknown Region'
         if (reversegeoCodedAddress.length > 0) {
-            const region = reversegeoCodedAddress[0].region || 'Unknown Region';
-            setCurrentRegion(region);
-        } else {
-            setCurrentRegion('Unknown Region');
-        }
+            regionName = reversegeoCodedAddress[0].region || 'Unknown Region';
+            setCurrentRegion(regionName);
+        } 
           
+          // Save region to AsyncStorage
+          await AsyncStorage.setItem('region', regionName)
+
           // Pass latitude and longitude to parent 
-          onLocationUpdate(lat, lon);
+          onLocationUpdate(lat, lon, regionName);
         } catch (error) {
           console.error("Error fetching location:", error);
           alert("An error occurred while fetching location.");
         }
       };
     
-      const handleManualLocation = (selectedItem: LocationType) => {
+      const handleManualLocation = async(selectedItem: LocationType) => {
         console.log(`Manually selected location: ${selectedItem.name}, Latitude: ${selectedItem.latitude}, Longitude: ${selectedItem.longitude}`);
         setCurrentRegion(selectedItem.name); // Update the displayed region name
-        onLocationUpdate(selectedItem.latitude, selectedItem.longitude); // Pass coordinates to parent
+        // Save region to AsyncStorage
+        await AsyncStorage.setItem('region', selectedItem.name)
+        onLocationUpdate(selectedItem.latitude, selectedItem.longitude, selectedItem.name); // Pass coordinates to parent
         setIsDropdownOpen(false); // close the dropdown
       };
     
