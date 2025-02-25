@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import SunExposure from "@/components/SunExposure";
 import SunExposureScreen from '../SunExposureScreen';
 import UVHome from '@/components/UVHome';
-import { getUVIndex } from '@/services/OpenWeatherService';
+import { getCurrentUvi} from '@/services/OpenWeatherService';
 //location imports
 import LocationHome from '@/components/LocationHome';
 import Header from '@/components/BuddyHeader'
@@ -47,7 +47,7 @@ const handleLocationUpdate = async (lat: number, lon: number) => {
     await AsyncStorage.setItem('latitude', String(lat))
     await AsyncStorage.setItem('longitude', String(lon))
 
-    const uvData = await getUVIndex(lat, lon)
+    const uvData = await getCurrentUvi(lat, lon)
     setUvIndex(uvData)
 
     // Optionally also store uvIndex so we can show it even before re-fetch

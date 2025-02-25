@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native'; 
 import React, { useState } from 'react'
 import { calculateSPF } from '@/services/CalculateRecommendedSPF';
+import { getDailyUvi } from '@/services/OpenWeatherService';
 
 export default function SummaryScreen() {
   const [recommendedSPF, setRecommendedSPF] = useState<string | number>('...');
@@ -17,19 +18,25 @@ export default function SummaryScreen() {
       const fetchData = async () => {
         setIsLoading(true);
         try {
-          // 1) Get UV + Skin Type from AsyncStorage
-          const uvIndex = await AsyncStorage.getItem('uvIndex');
+          // Get UV + Skin Type from AsyncStorage
+          //const uvIndex = await AsyncStorage.getItem('uvIndex');
           const skinTypeStr = await AsyncStorage.getItem('skinType'); 
+          const storedLat = await AsyncStorage.getItem('latitude');
+          const storedLon = await AsyncStorage.getItem('longitude');
 
           // If missing, default to 'N/A'
-          if (!uvIndex || !skinTypeStr) {
+          if (!skinTypeStr || !storedLat || !storedLon) {
             if (isActive) {
               setRecommendedSPF('N/A');
             }
           } else {
-            const uvNumber = parseFloat(uvIndex);
+            //const uvNumber = parseFloat(uvIndex);
+            const lat = parseFloat(storedLat);
+            const lon = parseFloat(storedLon);
+            const uvDailyData = await getDailyUvi(lat, lon)
+            //alert(`${uvDailyData}`);
             // Calculate the SPF
-            const spf = await calculateSPF(uvNumber, skinTypeStr);
+            const spf = await calculateSPF(uvDailyData, skinTypeStr);
             if (isActive) {
               setRecommendedSPF(spf);
             }

@@ -1,6 +1,6 @@
 const OPENWEATHER_API_KEY = process.env.EXPO_PUBLIC_API_KEY
 
-export const getUVIndex = async (latitude: number, longitude: number) => {
+export const getCurrentUvi = async (latitude: number, longitude: number) => {
   const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}`;
 
   try {
@@ -21,3 +21,24 @@ export const getUVIndex = async (latitude: number, longitude: number) => {
     return null;
   }
 };
+
+export const getDailyUvi = async (latitude:number, longitude:number) =>{
+  const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}`;
+
+  try{
+    const response = await fetch(url);
+    if(!response.ok){
+      console.log('response not okay, failed to fetch uv index');
+      throw new Error("Failed to fetch response from API")
+    }
+    const data = await response.json();
+    console.log('There is an response')
+    //fetch daily uvi from array of 8 day forecast
+    const uvIndex = data.daily[0].uvi;
+    console.log(`data of uv index is returned from service getUVIndex: ${uvIndex}`);
+    return uvIndex;
+  }catch(error){
+    console.error("Error fetching Daily Max UV Index:", error);
+    return null;
+  }
+}
