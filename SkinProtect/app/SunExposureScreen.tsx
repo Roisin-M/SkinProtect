@@ -11,73 +11,76 @@ type SunExposureScreenProps = {
 
 const SunExposureScreen = () => {
   const [activity, setActivity] = useState('');
-  const [timeSpent, setTimeSpent] = useState('');
+  const [exposure, setExposure] = useState('');
+  const [result, setResult] = useState('');
   const router = useRouter();
 
   const handleActivitySelect = (selectedActivity: string) => {
     setActivity(selectedActivity);
   };
+  const handleExposureSelect = (selectedExposure:string) => {
+    setExposure(selectedExposure);
+  };
 
   const handleSubmit = async () => {
-    if (!activity || !timeSpent) {
-      alert('Please select an activity and enter the time spent.');
-      return;
-    }
+    let result = '';
+    if (activity === 'Mostly Inside') {
+      result = 'Case 1: Apply SPF in the morning.';
+  } else if (activity === 'Both' || activity === 'Mostly Outside') {
+      if (exposure === 'Exposed') {
+          result = 'Case 2: Re-apply every 2 hours.';
+      } else if (exposure === 'Not Exposed') {
+          result = 'Case 3: TBC';
+      }
+  }
+  setResult(result);
 
      // Store both in AsyncStorage
      await AsyncStorage.setItem('activity', activity)
-     await AsyncStorage.setItem('timeSpent', timeSpent)
+     await AsyncStorage.setItem('exposure', exposure)
  
      // Then just go back to the tabs. No need for query params now.
      router.push('/(tabs)')
-
-    // router.push({
-    //   pathname: '/(tabs)',
-    //   params: { activity, timeSpent }, // Pass parameters to the main screen
-    // });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>What activity will you be doing today?</Text>
-      <View style={styles.iconContainer}>
-        <Pressable
-          style={[styles.iconWrapper, activity === 'Relaxing' && styles.active]}
-          onPress={() => handleActivitySelect('Relaxing')}
-        >
-          <FontAwesome5 name="umbrella-beach" size={30} color={activity === 'Relaxing' ? 'blue' : 'gray'} />
-          <Text style={styles.iconText}>Relaxing</Text>
-        </Pressable>
-        <Pressable
-          style={[styles.iconWrapper, activity === 'Running/Walking' && styles.active]}
-          onPress={() => handleActivitySelect('Running/Walking')}
-        >
-          <FontAwesome5 name="running" size={30} color={activity === 'Running/Walking' ? 'blue' : 'gray'} />
-          <Text style={styles.iconText}>Running/Walking</Text>
-        </Pressable>
-        <Pressable
-          style={[styles.iconWrapper, activity === 'Driving' && styles.active]}
-          onPress={() => handleActivitySelect('Driving')}
-        >
-          <FontAwesome5 name="car" size={30} color={activity === 'Driving' ? 'blue' : 'gray'} />
-          <Text style={styles.iconText}>Driving</Text>
-        </Pressable>
-      </View>
-      <Text style={styles.description}>How long will you be outside (in minutes)?</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter time in minutes"
-        value={timeSpent}
-        keyboardType="numeric"
-        onChangeText={setTimeSpent}
-      />
-      <Pressable style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit</Text>
-      </Pressable>
-    </View>
-  );
-};
+        <Text style={styles.title}>ACTIVITIES OPTIONS</Text>
+        <Text style={styles.description}>Where will you be today:</Text>
 
+        <View style={styles.buttonContainer}>
+            <Pressable style={[styles.button, activity === 'Mostly Inside' ? styles.active : null]} onPress={() => handleActivitySelect('Mostly Inside')}>
+                <Text style={styles.buttonText}>Mostly Inside</Text>
+            </Pressable>
+            
+            <Pressable style={[styles.button, activity === 'Both' ? styles.active : null]} onPress={() => handleActivitySelect('Both')}>
+                <Text style={styles.buttonText}>Both</Text>
+            </Pressable>
+
+            <Pressable style={[styles.button, activity === 'Mostly Outside' ? styles.active : null]} onPress={() => handleActivitySelect('Mostly Outside')}>
+                <Text style={styles.buttonText}>Mostly Outside</Text>
+            </Pressable>
+        </View>
+        {(activity === 'Both' || activity === 'Mostly Outside') && (
+            <View style={styles.buttonContainer}>
+                <Pressable style={[styles.button, exposure === 'Exposed' ? styles.active : null]} onPress={() => handleExposureSelect('Exposed')}>
+                    <Text style={styles.buttonText}>Exposed to the Sun</Text>
+                </Pressable>
+                
+                <Pressable style={[styles.button, exposure === 'Not Exposed' ? styles.active : null]} onPress={() => handleExposureSelect('Not Exposed')}>
+                    <Text style={styles.buttonText}>Not Exposed</Text>
+                </Pressable>
+            </View>
+        )}
+        
+        <Text style={styles.result}>{result}</Text>
+ 
+     <Pressable style={[styles.button]} onPress={() => handleSubmit()}>
+     <Text style={styles.buttonText}>SUBMIT</Text>
+ </Pressable>
+</View>
+);
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -110,6 +113,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+},
   description: {
     fontSize: 16,
     marginVertical: 10,
@@ -123,7 +131,7 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   button: {
-    backgroundColor: 'blue',
+    backgroundColor: 'red',
     padding: 10,
     borderRadius: 5,
   },
@@ -131,6 +139,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
   },
+  result: {
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'green',
+},
 })
 
 export default SunExposureScreen;
