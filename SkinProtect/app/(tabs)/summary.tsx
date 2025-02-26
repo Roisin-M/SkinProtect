@@ -1,10 +1,10 @@
 import { ActivityIndicator, Text, View,  StyleSheet } from 'react-native';
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import SunExposure from "@/components/SunExposure";
 import SunExposureScreen from '../SunExposureScreen';
 import UVHome from '@/components/UVHome';
-import { getUVIndex } from '@/services/OpenWeatherService';
+//import getUVIndex from '@/services/OpenWeatherService';
 //location imports
 import LocationHome from '@/components/LocationHome';
 import Header from '@/components/BuddyHeader';
@@ -12,9 +12,9 @@ import SkinQuiz from '@/components/SkinQuizComponent';
 //import for storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native'; 
-import React, { useState } from 'react'
 import { calculateSPF } from '@/services/CalculateRecommendedSPF';
 import { getDailyUvi } from '@/services/OpenWeatherService';
+import { getCurrentUvi } from '@/services/OpenWeatherService';
 
 export default function SummaryScreen() {
   // Use the safe area insets
@@ -51,7 +51,7 @@ const handleLocationUpdate = async (lat: number, lon: number) => {
     await AsyncStorage.setItem('latitude', String(lat))
     await AsyncStorage.setItem('longitude', String(lon))
 
-    const uvData = await getUVIndex(lat, lon)
+    const uvData = await getCurrentUvi(lat, lon)
     setUvIndex(uvData)
 
     // Optionally also store uvIndex so we can show it even before re-fetch

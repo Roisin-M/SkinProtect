@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Modal } from 'react-native';
-import { ActivityIndicator, Text, View,  StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import SunExposure from "@/components/SunExposure";
@@ -8,13 +7,10 @@ import UVHome from '@/components/UVHome';
 import { getCurrentUvi} from '@/services/OpenWeatherService';
 //location imports
 import LocationHome from '@/components/LocationHome';
-import Header from '@/components/BuddyHeader'
 import SkinQuiz from '@/components/SkinQuizComponent';
 //import for storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native'; 
-import React, { useState, useEffect } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { calculateSPF } from '@/services/CalculateRecommendedSPF';
 import Header from '@/components/BuddyHeader';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,6 +21,8 @@ export default function Index() {
   const [isLoading, setIsLoading] = useState(true);
   const { top: safeTop } = useSafeAreaInsets();
   const [uvIndex, setUvIndex] = useState<number | null>(null);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
 
   //pop ups with explanations
   const [modalVisible, setModalVisible] = useState(false);
@@ -90,31 +88,37 @@ export default function Index() {
 
   // decide reapplication logic
   useEffect(() => {
-    if (activity === "outdoor_direct" && uvIndex && uvIndex > 6 ) {
-      //high uv -> reapply every 2 hours (7200 seconds)
+    if (activity === "outdoor_direct" && uvIndex && uvIndex > 6) {
       setReapplicationTime(7200);
       setMessage(null);
     } else {
-      //indoor or low uv = apply once in the morning
       setReapplicationTime(null);
       setMessage("Apply once in the morning, no need to reapply.");
-    
-// Whenever lat/lon changes, fetch UV and persist
-const handleLocationUpdate = async (lat: number, lon: number) => {
-  try {
-    setLatitude(lat)
-    setLongitude(lon)
-    await AsyncStorage.setItem('latitude', String(lat))
-    await AsyncStorage.setItem('longitude', String(lon))
-
-    const uvData = await getCurrentUvi(lat, lon)
-    setUvIndex(uvData)
-
-    // Optionally also store uvIndex so we can show it even before re-fetch
-    if (uvData !== null) {
-      await AsyncStorage.setItem('uvIndex', String(uvData))
     }
-  }, [activity, uvIndex]);
+  
+    // Whenever lat/lon changes, fetch UV and persist
+    const handleLocationUpdate = async (lat: number, lon: number) => {
+      try {
+        setLatitude(lat);
+        setLongitude(lon);
+        await AsyncStorage.setItem("latitude", String(lat));
+        await AsyncStorage.setItem("longitude", String(lon));
+  
+        const uvData = await getCurrentUvi(lat, lon);
+        setUvIndex(uvData);
+  
+        // Optionally also store uvIndex so we can show it even before re-fetch
+        if (uvData !== null) {
+          await AsyncStorage.setItem("uvIndex", String(uvData));
+        }
+      } catch (error) {
+        console.error("Error updating location:", error);
+      }
+    };
+  
+  }, [activity, uvIndex]); // <-- Move this outside of handleLocationUpdate
+  
+
 
   //countdown timer logic
   useEffect(() => {
