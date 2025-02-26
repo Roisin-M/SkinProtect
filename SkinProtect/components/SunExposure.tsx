@@ -10,43 +10,39 @@ const SunExposure = () => {
   //const { activity, timeSpent } = useLocalSearchParams(); // Retrieve passed parameters
     // Local states to show what we loaded
     const [activity, setActivity] = useState<string | null>(null)
-    const [timeSpent, setTimeSpent] = useState<string | null>(null)
+    const [exposure, setExposure] = useState<string | null>(null)
 
 
     useEffect(() => {
       // On mount, retrieve from AsyncStorage
       const loadData = async () => {
         const storedActivity = await AsyncStorage.getItem('activity')
-        const storedTimeSpent = await AsyncStorage.getItem('timeSpent')
+        const storedExposure = await AsyncStorage.getItem('exposure')
         if (storedActivity) setActivity(storedActivity)
-        if (storedTimeSpent) setTimeSpent(storedTimeSpent)
+        if (storedExposure) setExposure(storedExposure) 
+          
       }
       loadData()
     }, [])
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sun Exposure</Text>
-      <Text style={styles.description}>
-        Let's assess your sun exposure today.
-      </Text>
-      {activity && timeSpent ? (
-        <View>
-          <Text style={styles.infoText}>Activity: {activity}</Text>
-          <Text style={styles.infoText}>Time Spent: {timeSpent} minutes</Text>
-        </View>
-      ) : (
-        <Text style={styles.placeholderText}>Submit your activity and time spent above.</Text>
-      )}
-      <Pressable
-        style={styles.button}
-        onPress={() => router.push("/SunExposureScreen")}
-      >
-        <Text style={styles.buttonText}>What activity will you be doing?</Text>
-      </Pressable>
-    </View>
-  );
-};
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>ACTIVITIES OPTIONS</Text>
+        <Text style={styles.description}>
+          Let's assess your SUN EXPOSURE for the day!
+        </Text>
+        <Pressable
+          style={styles.button}
+          onPress={() => router.push("/SunExposureScreen")}
+        >
+          <Text style={styles.buttonText}>How much sun exposure will you have today? $</Text>
+          <Text>
+          { exposure ? `Your skin type: ${exposure}` : "Lets find out your skin type!"}
+          </Text>
+        </Pressable>
+      </View>
+    );
+  };
+  
 
 
 const styles = StyleSheet.create({
