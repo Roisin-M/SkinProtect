@@ -38,6 +38,7 @@ const SunExposureScreen = () => {
      // Store both in AsyncStorage
      await AsyncStorage.setItem('activity', activity)
      await AsyncStorage.setItem('exposure', exposure)
+     await AsyncStorage.setItem('exposureResult', result)
  
      // Then just go back to the tabs. No need for query params now.
      router.push('/(tabs)')

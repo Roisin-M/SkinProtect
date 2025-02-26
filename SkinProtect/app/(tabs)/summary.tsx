@@ -1,8 +1,7 @@
-import { ActivityIndicator, Text, View,  StyleSheet } from 'react-native';
+import { View,  StyleSheet } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import SunExposure from "@/components/SunExposure";
-import SunExposureScreen from '../SunExposureScreen';
 import UVHome from '@/components/UVHome';
 //import getUVIndex from '@/services/OpenWeatherService';
 //location imports
@@ -11,9 +10,6 @@ import Header from '@/components/BuddyHeader';
 import SkinQuiz from '@/components/SkinQuizComponent';
 //import for storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native'; 
-import { calculateSPF } from '@/services/CalculateRecommendedSPF';
-import { getDailyUvi } from '@/services/OpenWeatherService';
 import { getCurrentUvi } from '@/services/OpenWeatherService';
 
 export default function SummaryScreen() {
