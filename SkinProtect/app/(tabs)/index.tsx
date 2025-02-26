@@ -1,13 +1,7 @@
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Modal } from 'react-native';
 import React, { useEffect, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import SunExposure from "@/components/SunExposure";
-import SunExposureScreen from '../SunExposureScreen';
-import UVHome from '@/components/UVHome';
-import { getCurrentUvi, getDailyUvi} from '@/services/OpenWeatherService';
-//location imports
-import LocationHome from '@/components/LocationHome';
-import SkinQuiz from '@/components/SkinQuizComponent';
+import { getDailyUvi} from '@/services/OpenWeatherService';
 //import for storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native'; 
@@ -21,8 +15,6 @@ export default function Index() {
   const [isLoading, setIsLoading] = useState(true);
   const { top: safeTop } = useSafeAreaInsets();
   const [uvIndex, setUvIndex] = useState<number | null>(null);
-  const [latitude, setLatitude] = useState<number | null>(null);
-  const [longitude, setLongitude] = useState<number | null>(null);
 
   //pop ups with explanations
   const [modalVisible, setModalVisible] = useState(false);
@@ -53,6 +45,7 @@ export default function Index() {
           const skinTypeStr = await AsyncStorage.getItem('skinType'); 
           const storedLat = await AsyncStorage.getItem('latitude');
           const storedLon = await AsyncStorage.getItem('longitude');
+          const storedUvIndex = await AsyncStorage.getItem('uvIndex')
 
           // If missing, default to 'N/A'
           if (!skinTypeStr || !storedLat || !storedLon) {
@@ -63,7 +56,8 @@ export default function Index() {
             //const uvNumber = parseFloat(uvIndex);
             const lat = parseFloat(storedLat);
             const lon = parseFloat(storedLon);
-            const uvDailyData = await getDailyUvi(lat, lon)
+            const uvDailyData = await getDailyUvi(lat, lon);
+            if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
 
             // Calculate the SPF
             const spf = await calculateSPF(uvDailyData, skinTypeStr);
@@ -97,26 +91,6 @@ export default function Index() {
       setReapplicationTime(null);
       setMessage("Apply once in the morning, no need to reapply.");
     }
-  
-    // // Whenever lat/lon changes, fetch UV and persist
-    // const handleLocationUpdate = async (lat: number, lon: number) => {
-    //   try {
-    //     setLatitude(lat);
-    //     setLongitude(lon);
-    //     await AsyncStorage.setItem("latitude", String(lat));
-    //     await AsyncStorage.setItem("longitude", String(lon));
-  
-    //     const uvData = await getCurrentUvi(lat, lon);
-    //     setUvIndex(uvData);
-  
-    //     // Optionally also store uvIndex so we can show it even before re-fetch
-    //     if (uvData !== null) {
-    //       await AsyncStorage.setItem("uvIndex", String(uvData));
-    //     }
-    //   } catch (error) {
-    //     console.error("Error updating location:", error);
-    //   }
-    // };
   
   }, [activity, uvIndex]); // <-- Move this outside of handleLocationUpdate
   
