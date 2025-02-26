@@ -11,6 +11,10 @@ import Header from '@/components/BuddyHeader';
 import SkinQuiz from '@/components/SkinQuizComponent';
 //import for storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native'; 
+import React, { useState } from 'react'
+import { calculateSPF } from '@/services/CalculateRecommendedSPF';
+import { getDailyUvi } from '@/services/OpenWeatherService';
 
 export default function SummaryScreen() {
   // Use the safe area insets
@@ -72,6 +76,7 @@ const handleLocationUpdate = async (lat: number, lon: number) => {
             <SkinQuiz/>
              {/*Sun Exposure Component*/}
             <SunExposure /> 
+
         </View>
     );
 }
