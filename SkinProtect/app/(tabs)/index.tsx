@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import SunExposure from "@/components/SunExposure";
 import SunExposureScreen from '../SunExposureScreen';
 import UVHome from '@/components/UVHome';
-import { getCurrentUvi} from '@/services/OpenWeatherService';
+import { getCurrentUvi, getDailyUvi} from '@/services/OpenWeatherService';
 //location imports
 import LocationHome from '@/components/LocationHome';
 import SkinQuiz from '@/components/SkinQuizComponent';
@@ -49,22 +49,24 @@ export default function Index() {
       const fetchData = async () => {
         setIsLoading(true);
         try {
-          // 1) Get UV + Skin Type from AsyncStorage
-          const uvIndex = await AsyncStorage.getItem('uvIndex');
+          //Get UV + Skin Type from AsyncStorage
           const skinTypeStr = await AsyncStorage.getItem('skinType'); 
+          const storedLat = await AsyncStorage.getItem('latitude');
+          const storedLon = await AsyncStorage.getItem('longitude');
 
           // If missing, default to 'N/A'
-          if (!uvIndex || !skinTypeStr) {
+          if (!skinTypeStr || !storedLat || !storedLon) {
             if (isActive) {
               setRecommendedSPF('N/A');
-              setUvIndex(null);
             }
           } else {
-            const uvNumber = parseFloat(uvIndex);
-            setUvIndex(uvNumber);
+            //const uvNumber = parseFloat(uvIndex);
+            const lat = parseFloat(storedLat);
+            const lon = parseFloat(storedLon);
+            const uvDailyData = await getDailyUvi(lat, lon)
 
             // Calculate the SPF
-            const spf = await calculateSPF(uvNumber, skinTypeStr);
+            const spf = await calculateSPF(uvDailyData, skinTypeStr);
             if (isActive) {
               setRecommendedSPF(spf);
             }
@@ -96,25 +98,25 @@ export default function Index() {
       setMessage("Apply once in the morning, no need to reapply.");
     }
   
-    // Whenever lat/lon changes, fetch UV and persist
-    const handleLocationUpdate = async (lat: number, lon: number) => {
-      try {
-        setLatitude(lat);
-        setLongitude(lon);
-        await AsyncStorage.setItem("latitude", String(lat));
-        await AsyncStorage.setItem("longitude", String(lon));
+    // // Whenever lat/lon changes, fetch UV and persist
+    // const handleLocationUpdate = async (lat: number, lon: number) => {
+    //   try {
+    //     setLatitude(lat);
+    //     setLongitude(lon);
+    //     await AsyncStorage.setItem("latitude", String(lat));
+    //     await AsyncStorage.setItem("longitude", String(lon));
   
-        const uvData = await getCurrentUvi(lat, lon);
-        setUvIndex(uvData);
+    //     const uvData = await getCurrentUvi(lat, lon);
+    //     setUvIndex(uvData);
   
-        // Optionally also store uvIndex so we can show it even before re-fetch
-        if (uvData !== null) {
-          await AsyncStorage.setItem("uvIndex", String(uvData));
-        }
-      } catch (error) {
-        console.error("Error updating location:", error);
-      }
-    };
+    //     // Optionally also store uvIndex so we can show it even before re-fetch
+    //     if (uvData !== null) {
+    //       await AsyncStorage.setItem("uvIndex", String(uvData));
+    //     }
+    //   } catch (error) {
+    //     console.error("Error updating location:", error);
+    //   }
+    // };
   
   }, [activity, uvIndex]); // <-- Move this outside of handleLocationUpdate
   
