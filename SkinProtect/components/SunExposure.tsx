@@ -10,15 +10,15 @@ const SunExposure = (props: Props) => {
 const router = useRouter();
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sun Exposure</Text>
+      <Text style={styles.title}>ACTIVITIES OPTIONS</Text>
       <Text style={styles.description}>
-        Let's assess your sun exposure today. We need to know what activity you'll be doing and for how long.
+        Let's assess your SUN EXPOSURE for the day!
       </Text>
       <Pressable
         style={styles.button}
         onPress={() => router.push("/SunExposureScreen")}
       >
-        <Text style={styles.buttonText}>What activity will you be doing?</Text>
+        <Text style={styles.buttonText}>How much sun exposure will you have today?</Text>
       </Pressable>
     </View>
   );
@@ -27,10 +27,6 @@ const router = useRouter();
 
 const styles = StyleSheet.create({
   container: {
-   // flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
-    //padding: 16,
     margin: 16,
     padding: 16,
     backgroundColor: Colors.background,
