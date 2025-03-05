@@ -24,29 +24,26 @@ const SunExposureScreen = () => {
 const handleExposureSelect = (selectedExposure:string) => {
   setExposure(selectedExposure);
 };
-
-  const handleSubmit = async () => {
-    let result = '';
-    if (activity === 'Mostly Inside') {
-      result = 'Case 1: Apply SPF in the morning.';
+const handleSubmit = async () => {
+  let result = '';
+  if (activity === 'Mostly Inside') {
+    result = 'Case 1: Apply SPF in the morning.';
   } else if (activity === 'Both' || activity === 'Mostly Outside') {
-      if (exposure === 'Exposed') {
-          result = 'Case 2: Re-apply every 2 hours.';
-      } else if (exposure === 'Not Exposed') {
-          result = 'Case 3: TBC';
-      }
+    if (exposure === 'Exposed') {
+      result = 'Case 2: Re-apply every 2 hours.';
+    } else if (exposure === 'Not Exposed') {
+      result = 'Case 3: TBC';
+    }
   }
   setResult(result);
 
-     // Store both in AsyncStorage
-     await AsyncStorage.setItem('activity', activity)
-     await AsyncStorage.setItem('exposure', exposure)
- 
-     // Then just go back to the tabs. No need for query params now.
-     router.push('/(tabs)')
+   //Store values in AsyncStorage
+  await AsyncStorage.setItem('activity', activity);
+  await AsyncStorage.setItem('exposure', exposure);
+  await AsyncStorage.setItem('result', result); // Store the result
 
-  
-  };
+  router.push('/(tabs)');
+};
 
   return (
     <View style={styles.container}>
