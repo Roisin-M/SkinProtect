@@ -13,6 +13,7 @@ const SunExposureScreen = () => {
   const [activity, setActivity] = useState('');
   const [exposure, setExposure] = useState('');
   const [result, setResult] = useState('');
+  
   const router = useRouter();
 
   const handleActivitySelect = (selectedActivity: string) => {
@@ -51,14 +52,17 @@ const SunExposureScreen = () => {
 
         <View style={styles.buttonContainer}>
             <Pressable style={[styles.button, activity === 'Mostly Inside' ? styles.active : null]} onPress={() => handleActivitySelect('Mostly Inside')}>
+            <FontAwesome5 name="home" size={50} color="white" />
                 <Text style={styles.buttonText}>Mostly Inside</Text>
             </Pressable>
             
             <Pressable style={[styles.button, activity === 'Both' ? styles.active : null]} onPress={() => handleActivitySelect('Both')}>
+            <FontAwesome5 name="adjust" size={50} color="white" />
                 <Text style={styles.buttonText}>Both</Text>
             </Pressable>
 
             <Pressable style={[styles.button, activity === 'Mostly Outside' ? styles.active : null]} onPress={() => handleActivitySelect('Mostly Outside')}>
+            <FontAwesome5 name="sun" size={50} color="white" />
                 <Text style={styles.buttonText}>Mostly Outside</Text>
             </Pressable>
         </View>
@@ -91,9 +95,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 50,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 50,
   },
   iconContainer: {
     flexDirection: 'row',
@@ -105,23 +109,32 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   active: {
-    backgroundColor: '#e0f7fa',
-    borderRadius: 10,
-    padding: 10,
+    backgroundColor: 'green',
+    borderRadius: 50,
+    padding: 20,
   },
   iconText: {
-    marginTop: 5,
-    fontSize: 14,
+    marginTop: 10,
+    fontSize: 20,
     textAlign: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 10,
+    marginTop: 20,
+    gap: 50,
 },
+buttonContent: {
+  flexDirection: 'row', 
+  alignItems: 'center', 
+  justifyContent: 'center',
+  gap: 50, 
+},
+
   description: {
-    fontSize: 16,
+    fontSize: 30,
     marginVertical: 10,
+    fontWeight: '800',
   },
   input: {
     borderWidth: 1,
@@ -132,19 +145,22 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   button: {
-    backgroundColor: 'red',
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: 'orange',
+    padding: 20,
+    borderRadius: 50,
+    width: 300,
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 25,
   },
   result: {
-    marginTop: 20,
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'green',
+    marginTop: 70,
+    fontSize: 35,
+    fontWeight: '800',
+    color: 'black',
 },
 })
 
