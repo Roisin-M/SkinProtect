@@ -1,6 +1,6 @@
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Modal } from 'react-native';
+import { View, Image, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Modal, StatusBar, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { getDailyUvi} from '@/services/OpenWeatherService';
 //import for storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -127,24 +127,50 @@ export default function Index() {
       {/* Header component */}
       <Header />
 
-      {/* Content below the header */}
+      {/* weather image */}
+      <View style={styles.weatherPictureContainer}>
+        <Image style={styles.weatherPicture} source={require('../../assets/images/raining.png')}/>
+      </View>
+
+      <Text style={styles.heading1}>
+        SPF {recommendedSPF}
+        <TouchableOpacity onPress={() => showModal("SPF (Sun Protection Factor) indicates how well sunscreen protects against UVB rays. Higher SPF provides stronger protection.")}>
+          <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+        </TouchableOpacity>
+      </Text>
+
+      <Text style={styles.heading2}>
+        Current UV Index: {uvIndex !== null ? uvIndex : 'N/A'}
+        <TouchableOpacity onPress={() => showModal("UV Index measures the level of ultraviolet radiation from the sun. Higher values mean stronger UV exposure and greater risk of skin damage.")}>
+          <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+        </TouchableOpacity>
+      </Text>
+
+      <View style={styles.ReapplicationContainer} >
+
+      </View>
+      
+      
+      {/* Content below the header
       <View style={styles.infoContainer}>
         {isLoading ? (
           <ActivityIndicator size="large" color="#fff" />
         ) : (
-          <>
+          <> */}
+            
+
             {/* UV Index Row */}
-            <View style={styles.row}>
-              <Text style={styles.heading}>
+            {/* <View style={styles.row}>
+              <Text style={styles.heading1}>
                 Current UV Index: {uvIndex !== null ? uvIndex : 'N/A'}
               </Text>
               <TouchableOpacity onPress={() => showModal("UV Index measures the level of ultraviolet radiation from the sun. Higher values mean stronger UV exposure and greater risk of skin damage.")}>
                 <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
               </TouchableOpacity>
-            </View>
+            </View> */}
 
             {/* SPF Recommendation Circle */}
-            <View style={styles.SPFContainer}>
+            {/* <View style={styles.SPFContainer}>
               <View style={styles.row}>
                 <Text style={styles.label}>Recommended SPF:</Text>
                 <TouchableOpacity onPress={() => showModal("SPF (Sun Protection Factor) indicates how well sunscreen protects against UVB rays. Higher SPF provides stronger protection.")}>
@@ -152,10 +178,10 @@ export default function Index() {
                 </TouchableOpacity>
               </View>
               <Text style={styles.value}>{recommendedSPF}</Text>
-            </View>
+            </View> */}
 
             {/* Reapplication section */}
-            <View style={styles.ReapplicationContainer}>
+            {/* <View style={styles.ReapplicationContainer}>
               <View style={styles.row}>
                 <Text style={styles.label}>Reapplication:</Text>
                 <TouchableOpacity onPress={() => showModal("Reapplying sunscreen is crucial for maintaining effective protection against UV radiation. The frequency of reapplication depends on your activity and the UV index. If you are outdoors in direct sunlight for extended periods, sunscreen should be reapplied regularly to maintain its effectiveness. In contrast, if you spend most of your time indoors, a single morning application may be sufficient. Always reapply every 2 hours if sweating, swimming, or exposed to strong UV rays.")}>
@@ -167,10 +193,10 @@ export default function Index() {
               ) : (
                 <Text style={styles.value}>{message}</Text>
               )}
-            </View>
-          </>
+            </View> */}
+          {/* </>
         )}
-      </View>
+      </View> */}
 
       {/* Modal for Info */}
       <Modal transparent={true} visible={modalVisible} animationType="fade">
@@ -188,17 +214,43 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
+  theme:{
+    backgroundColor: 'rgba(255, 255, 255, 0.5)'
+  },
   container: {
     flex: 1,
-    backgroundColor: '#25292e',
-    //justifyContent: 'center',
+    backgroundColor: '#023047',
+    //rjustifyContent: 'center',
     //alignItems: 'center',
   },
-  heading: {
+  heading1: {
     color: '#fff',
-    fontSize: 22,
+    textAlign: 'center',
+    fontSize: 60,
     fontWeight: 'bold',
     marginBottom: 16,
+  },
+  heading2: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 20,
+    marginBottom: 16,
+  },
+  weatherPictureContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 20
+  },
+  weatherPicture: {
+    width: 250,
+    height: 250,
+  },
+  reapplicationContainer: {
+    backgroundColor: 'rgba(211, 211, 211, 0.2)', // LightGray with 50% opacity
+    padding: 20,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   infoContainer: {
     alignItems: 'center',
@@ -212,7 +264,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   SPFContainer:{
-    backgroundColor: '#323644',
+    backgroundColor: '#FFB703',
     borderRadius: 100,
     width: 200,
     height:200,
@@ -222,7 +274,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   ReapplicationContainer:{
-    backgroundColor: '#323644',
+    backgroundColor: 'lightgray',
+    opacity: 5,
     borderRadius: 10,
     width: 300,
     height:200,

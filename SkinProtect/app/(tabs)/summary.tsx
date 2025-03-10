@@ -1,4 +1,4 @@
-import { View,  StyleSheet } from 'react-native';
+import { View,  StyleSheet, ScrollView } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import SunExposure from "@/components/SunExposure";
@@ -63,16 +63,17 @@ const handleLocationUpdate = async (lat: number, lon: number) => {
         <View style={[styles.container, {paddingTop:safeTop}]}>
             {/* Header component */}
             <Header/> 
-             {/* Location Component */}
-            <LocationHome 
-            onLocationUpdate={handleLocationUpdate} />
-            {/* UV Index component */}
-            <UVHome uvIndex={uvIndex}/> 
-            {/* Skin Quiz Component */}
-            <SkinQuiz/>
-             {/*Sun Exposure Component*/}
-            <SunExposure /> 
-
+            <ScrollView >
+              {/* Location Component */}
+              <LocationHome 
+              onLocationUpdate={handleLocationUpdate} />
+              {/* UV Index component */}
+              <UVHome uvIndex={uvIndex}/> 
+              {/* Skin Quiz Component */}
+              <SkinQuiz/>
+              {/*Sun Exposure Component*/}
+              <SunExposure /> 
+            </ScrollView>
         </View>
     );
 }
