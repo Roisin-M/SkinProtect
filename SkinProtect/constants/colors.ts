@@ -23,6 +23,7 @@ export const Colors = {
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
   },
+  seenThroughBG: 'rgba(211, 211, 211, 0.2)',
   background: '#F4F4F4',
   tint: '#FF4C4C',
   tabIconDefault: '#687076',

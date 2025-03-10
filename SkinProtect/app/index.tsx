@@ -10,7 +10,7 @@ const Page = () => {
   return (
     <View style={styles.container}>
       <ImageBackground 
-      source={require("@/assets/images/sun-getting-started.jpg")}
+      source={require("@/assets/images/sun.png")}
        style={{flex: 1}} 
        resizeMode="cover">
        <View style={styles.wrapper}>

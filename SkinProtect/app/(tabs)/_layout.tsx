@@ -6,16 +6,17 @@ export default function TabLayout() {
   return (
     <Tabs
         screenOptions={{
-            tabBarActiveTintColor: '#ffd33d',
+            tabBarActiveTintColor: '#fdba02', //fdba02 //ffb703
+            tabBarInactiveTintColor: 'white',
             headerShown: false, // Disable the default navigation header
             headerStyle: {
-                backgroundColor: '#25292e',
-              },
-              headerShadowVisible: false,
-              headerTintColor: '#fff',
-              tabBarStyle: {
-              backgroundColor: '#25292e',
-              },
+              backgroundColor: '#219ebc',
+            },
+            headerShadowVisible: false,
+            headerTintColor: '#fff',
+            tabBarStyle: {
+              backgroundColor: '#151016',
+            },
         }}
     >
       <Tabs.Screen
@@ -30,7 +31,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="summary"
         options={{
-          title: 'Summary',
+          title: 'UV Profile',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'information-circle' : 'information-circle-outline'} color={color} size={24}/>
           ),

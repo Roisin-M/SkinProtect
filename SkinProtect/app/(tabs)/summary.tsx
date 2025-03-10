@@ -1,4 +1,4 @@
-import { View,  StyleSheet, ScrollView } from 'react-native';
+import { View,  StyleSheet, ScrollView, Text } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import SunExposure from "@/components/SunExposure";
@@ -63,17 +63,22 @@ const handleLocationUpdate = async (lat: number, lon: number) => {
         <View style={[styles.container, {paddingTop:safeTop}]}>
             {/* Header component */}
             <Header/> 
-            <ScrollView >
-              {/* Location Component */}
-              <LocationHome 
-              onLocationUpdate={handleLocationUpdate} />
-              {/* UV Index component */}
-              <UVHome uvIndex={uvIndex}/> 
-              {/* Skin Quiz Component */}
-              <SkinQuiz/>
-              {/*Sun Exposure Component*/}
-              <SunExposure /> 
-            </ScrollView>
+            <View style={styles.main}>
+              <ScrollView >
+                <Text style={styles.heading}>
+                  Skin & Sun
+                </Text>
+                {/* Location Component */}
+                <LocationHome 
+                onLocationUpdate={handleLocationUpdate} />
+                {/* UV Index component */}
+                <UVHome uvIndex={uvIndex}/> 
+                {/* Skin Quiz Component */}
+                <SkinQuiz/>
+                {/*Sun Exposure Component*/}
+                <SunExposure /> 
+              </ScrollView>
+            </View>
         </View>
     );
 }
@@ -81,9 +86,14 @@ const handleLocationUpdate = async (lat: number, lon: number) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#25292e',
+    backgroundColor: '#023047',
     //alignItems: 'center',
     //justifyContent: 'center',
+  },
+  main: {
+    marginTop: 80,
+    alignContent: 'center',
+    justifyContent: 'center',
   },
   content: {
     padding: 16,
@@ -92,6 +102,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     marginTop: 20,
+  },
+  heading: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 40,
+    fontWeight: 'bold',
   },
 //   button: {
 //     fontSize: 20,

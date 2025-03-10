@@ -1,12 +1,12 @@
 import { View, Image, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Modal, StatusBar, TextInput } from 'react-native';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { getDailyUvi} from '@/services/OpenWeatherService';
 //import for storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native'; 
 import { calculateSPF } from '@/services/CalculateRecommendedSPF';
-import Header from '@/components/BuddyHeader';
+import Header, { BuddyHeaderRef } from '@/components/BuddyHeader';
 import { Ionicons } from '@expo/vector-icons';
 
 
@@ -27,11 +27,53 @@ export default function Index() {
   const [reapplicationTime, setReapplicationTime] = useState<number | null>(null); // Countdown in seconds
   const [message, setMessage] = useState<string | null>(null);
 
-  //function to open the modal with specific text
-  const showModal = (text:string) => {
-    setModalText(text);
-    setModalVisible(true);
+  //ref for buddy header
+  const buddyHeaderRef = useRef<BuddyHeaderRef>(null);
+
+  //const with info messages
+  const infoMessages = {
+    spf: "SPF (Sun Protection Factor) indicates how well sunscreen protects against UVB rays. Higher SPF provides stronger protection.",
+    uvIndex: "UV Index measures the level of ultraviolet radiation from the sun. Higher values mean stronger UV exposure and greater risk of skin damage.",
+    reapplication: "Reapplying sunscreen is crucial for maintaining effective protection against UV radiation. The frequency of reapplication depends on your activity and the UV index. If you are outdoors in direct sunlight for extended periods, sunscreen should be reapplied regularly to maintain its effectiveness. In contrast, if you spend most of your time indoors, a single morning application may be sufficient. Always reapply every 2 hours if sweating, swimming, or exposed to strong UV rays.",
   };
+
+  //show buddy messages
+  const showBuddyMessage = (key: keyof typeof infoMessages) => {
+    if (buddyHeaderRef.current) {
+      buddyHeaderRef.current.updateMessage(infoMessages[key], true);
+    }
+  };
+
+  // Function to clear AsyncStorage
+  // const clearAsyncStorage = async () => {
+  //   await AsyncStorage.clear();
+  //   console.log('AsyncStorage cleared');
+  // };
+
+  // // Clear AsyncStorage on component mount
+  // useEffect(() => {
+  //   clearAsyncStorage();
+  // }, []);
+
+  //image source to be changed as needed
+  const [imageSource, setImageSource] = useState(require('../../assets/images/sun.png'));
+
+  //const to keep track of day/night time
+  let dayTime = true;
+  
+  //method to determine if it is day or night
+  useEffect(() => {
+    const currentHour = new Date().getHours();
+    if (currentHour >= 6 && currentHour < 18){
+      //daytime
+      setImageSource(require('../../assets/images/sun.png'));
+    } else {
+      //nighttime
+      dayTime = false;
+      setImageSource(require('../../assets/images/moon.png'));
+    }
+  }, []);
+
 
   // Re-run every time this screen is focused
   useFocusEffect(
@@ -53,17 +95,23 @@ export default function Index() {
               setRecommendedSPF('N/A');
             }
           } else {
-            //const uvNumber = parseFloat(uvIndex);
-            const lat = parseFloat(storedLat);
-            const lon = parseFloat(storedLon);
-            const uvDailyData = await getDailyUvi(lat, lon);
-            if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
+            //check if it is day time
+            if (dayTime == true) {
+              //const uvNumber = parseFloat(uvIndex);
+              const lat = parseFloat(storedLat);
+              const lon = parseFloat(storedLon);
+              const uvDailyData = await getDailyUvi(lat, lon);
+              if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
 
-            // Calculate the SPF
-            const spf = await calculateSPF(uvDailyData, skinTypeStr);
-            if (isActive) {
-              setRecommendedSPF(spf);
+              // Calculate the SPF
+              const spf = await calculateSPF(uvDailyData, skinTypeStr);
+              if (isActive) {
+                setRecommendedSPF(spf);
+              }
+            } else {
+              setRecommendedSPF('Not Needed');
             }
+            
           }
         } catch (error) {
           console.error('Error in SummaryScreen fetching SPF:', error);
@@ -95,7 +143,6 @@ export default function Index() {
   }, [activity, uvIndex]); // <-- Move this outside of handleLocationUpdate
   
 
-
   //countdown timer logic
   useEffect(() => {
     if (reapplicationTime === null) return;
@@ -125,108 +172,60 @@ export default function Index() {
   return (
     <View style={[styles.container, { paddingTop: safeTop }]}>
       {/* Header component */}
-      <Header />
-
-      {/* weather image */}
-      <View style={styles.weatherPictureContainer}>
-        <Image style={styles.weatherPicture} source={require('../../assets/images/raining.png')}/>
-      </View>
-
-      <Text style={styles.heading1}>
-        SPF {recommendedSPF}
-        <TouchableOpacity onPress={() => showModal("SPF (Sun Protection Factor) indicates how well sunscreen protects against UVB rays. Higher SPF provides stronger protection.")}>
-          <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
-        </TouchableOpacity>
-      </Text>
-
-      <Text style={styles.heading2}>
-        Current UV Index: {uvIndex !== null ? uvIndex : 'N/A'}
-        <TouchableOpacity onPress={() => showModal("UV Index measures the level of ultraviolet radiation from the sun. Higher values mean stronger UV exposure and greater risk of skin damage.")}>
-          <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
-        </TouchableOpacity>
-      </Text>
-
-      <View style={styles.ReapplicationContainer} >
-
-      </View>
-      
-      
-      {/* Content below the header
-      <View style={styles.infoContainer}>
-        {isLoading ? (
-          <ActivityIndicator size="large" color="#fff" />
-        ) : (
-          <> */}
-            
-
-            {/* UV Index Row */}
-            {/* <View style={styles.row}>
-              <Text style={styles.heading1}>
-                Current UV Index: {uvIndex !== null ? uvIndex : 'N/A'}
-              </Text>
-              <TouchableOpacity onPress={() => showModal("UV Index measures the level of ultraviolet radiation from the sun. Higher values mean stronger UV exposure and greater risk of skin damage.")}>
-                <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
-              </TouchableOpacity>
-            </View> */}
-
-            {/* SPF Recommendation Circle */}
-            {/* <View style={styles.SPFContainer}>
-              <View style={styles.row}>
-                <Text style={styles.label}>Recommended SPF:</Text>
-                <TouchableOpacity onPress={() => showModal("SPF (Sun Protection Factor) indicates how well sunscreen protects against UVB rays. Higher SPF provides stronger protection.")}>
-                  <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
-                </TouchableOpacity>
-              </View>
-              <Text style={styles.value}>{recommendedSPF}</Text>
-            </View> */}
-
-            {/* Reapplication section */}
-            {/* <View style={styles.ReapplicationContainer}>
-              <View style={styles.row}>
-                <Text style={styles.label}>Reapplication:</Text>
-                <TouchableOpacity onPress={() => showModal("Reapplying sunscreen is crucial for maintaining effective protection against UV radiation. The frequency of reapplication depends on your activity and the UV index. If you are outdoors in direct sunlight for extended periods, sunscreen should be reapplied regularly to maintain its effectiveness. In contrast, if you spend most of your time indoors, a single morning application may be sufficient. Always reapply every 2 hours if sweating, swimming, or exposed to strong UV rays.")}>
-                  <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
-                </TouchableOpacity>
-              </View>
-              {reapplicationTime !== null ? (
-                <Text style={styles.countdown}>Next in: {formatTime(reapplicationTime)}</Text>
-              ) : (
-                <Text style={styles.value}>{message}</Text>
-              )}
-            </View> */}
-          {/* </>
-        )}
-      </View> */}
-
-      {/* Modal for Info */}
-      <Modal transparent={true} visible={modalVisible} animationType="fade">
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalText}>{modalText}</Text>
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
+      <Header ref={buddyHeaderRef}/>
+      <View style={styles.main}>
+        {/* weather image */}
+        <View style={styles.weatherPictureContainer}>
+          <Image style={styles.weatherPicture} source={imageSource}/>
         </View>
-      </Modal>
+
+        <Text style={styles.heading1}>
+          SPF {recommendedSPF}
+          <TouchableOpacity onPress={() => showBuddyMessage("spf")}>
+            <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+          </TouchableOpacity>
+        </Text>
+
+        <Text style={styles.heading2}>
+          Current UV Index: {uvIndex !== null ? uvIndex : 'N/A'}
+          <TouchableOpacity onPress={() => showBuddyMessage("uvIndex")}>
+            <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+          </TouchableOpacity>
+        </Text>
+
+        <View style={styles.ReapplicationContainer}>
+          <Text style={styles.label}>Reapplication:</Text>
+          <TouchableOpacity onPress={() => showBuddyMessage("reapplication")}>
+            <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+          </TouchableOpacity>
+          {reapplicationTime !== null ? (
+            <Text style={styles.countdown}>Next in: {formatTime(reapplicationTime)}</Text>
+          ) : (
+            <Text style={styles.value}>{message}</Text>
+          )}
+        </View>
+
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  theme:{
-    backgroundColor: 'rgba(255, 255, 255, 0.5)'
-  },
-  container: {
+ container: {
     flex: 1,
     backgroundColor: '#023047',
     //rjustifyContent: 'center',
     //alignItems: 'center',
   },
+  main: {
+    marginTop: 80,
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
   heading1: {
     color: '#fff',
     textAlign: 'center',
-    fontSize: 60,
+    fontSize: 45,
     fontWeight: 'bold',
     marginBottom: 16,
   },
@@ -245,7 +244,7 @@ const styles = StyleSheet.create({
     width: 250,
     height: 250,
   },
-  reapplicationContainer: {
+  ReapplicationContainer: {
     backgroundColor: 'rgba(211, 211, 211, 0.2)', // LightGray with 50% opacity
     padding: 20,
     borderRadius: 15,
@@ -273,16 +272,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 16,
   },
-  ReapplicationContainer:{
-    backgroundColor: 'lightgray',
-    opacity: 5,
-    borderRadius: 10,
-    width: 300,
-    height:200,
-    paddingTop: 30,
-    alignItems: 'center',
-    marginTop: 30,
-  },
   countdown: {
     fontSize: 20, 
     fontWeight: 'bold', 
@@ -298,33 +287,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#ffef00', 
-  },
-  modalBackground: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    width: 300,
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  modalText: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  closeButton: {
-    backgroundColor: '#25292e',
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  closeButtonText: {
-    color: '#fff',
-    fontSize: 16,
   },
 });

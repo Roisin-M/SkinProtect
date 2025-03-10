@@ -36,7 +36,7 @@ const Accordion = ({ title, children }: { title: string; children: React.ReactNo
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(211, 211, 211, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 8,
     marginBottom: 10,
     overflow: 'hidden',
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   text: {
-    color: 'white',
+    color: 'black',
     fontSize: 16,
     paddingTop: 10,
   },
