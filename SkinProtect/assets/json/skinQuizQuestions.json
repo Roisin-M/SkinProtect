@@ -3,8 +3,8 @@
       "id": "1",
       "question": "What is the color of your eyes?",
       "options": [
-        { "text": "Light Blue, Grey, or Green", "score": 0 },
-        { "text": "Blue, Grey, or Green", "score": 1 },
+        { "text": "Light Blue, Grey, or Light Green", "score": 0 },
+        { "text": "Dark Blue, or Dark Green", "score": 1 },
         { "text": "Green/Brown, Brown", "score": 2 },
         { "text": "Dark Brown or Black", "score": 3 }
       ]
