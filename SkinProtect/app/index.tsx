@@ -1,44 +1,11 @@
 import { ImageBackground, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useRouter } from "expo-router";
 import { Colors } from "@/constants/colors";
 import Animated ,{ FadeInDown, FadeInRight } from "react-native-reanimated";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Page = () => {
   const router = useRouter();
-  const [isFirstLaunch, setIsFirstLaunch] = useState(false);
-  // //Function to clear AsyncStorage
-  // const clearAsyncStorage = async () => {
-  //   try {
-  //     await AsyncStorage.clear();
-  //     console.log('AsyncStorage cleared');
-  //   } catch (error) {
-  //     console.error('Error clearing AsyncStorage:', error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   clearAsyncStorage();
-  // }, []);
-  
-
-  //check if the app was already opened to know if we need onboarding
-  useEffect(() => {
-    const checkFirstLaunch = async () => {
-      const hasLaunched = await AsyncStorage.getItem("hasLaunched");
-
-      if (hasLaunched) {
-        router.replace("/(tabs)"); // Skip onboarding if already launched
-      } else {
-        await AsyncStorage.setItem("hasLaunched", "true");
-        setIsFirstLaunch(true);
-      }
-    };
-
-    checkFirstLaunch();
-  }, []);
-
-  if (isFirstLaunch === null) return null; // Prevent flickering
 
   return (
     <View style={styles.container}>
@@ -102,7 +69,7 @@ const styles = StyleSheet.create({
     textAlign:'center',
   },
   btn:{
-    backgroundColor:Colors.utOrange,
+    backgroundColor:Colors.orange,
     paddingVertical:15,
     marginVertical:20,
     alignItems:'center',
