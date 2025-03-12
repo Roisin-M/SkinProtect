@@ -36,6 +36,8 @@ export default function Index() {
   //reapplication states
   const [reapplicationTime, setReapplicationTime] = useState<number | null>(null); // Countdown in seconds
   const [message, setMessage] = useState('N/A');
+  const [reapplicationCase, setReapplicationCase] = useState<number | null>(null);
+  const [reapplicationMessage, setReapplicationMessage] = useState('');
 
   //ref for buddy header
   const buddyHeaderRef = useRef<BuddyHeaderRef>(null);
@@ -45,6 +47,8 @@ export default function Index() {
     spf: "SPF (Sun Protection Factor) indicates how well sunscreen protects against UVB rays. Higher SPF provides stronger protection.",
     uvIndex: "UV Index measures the level of ultraviolet radiation from the sun. Higher values mean stronger UV exposure and greater risk of skin damage.",
     reapplication: "Reapplying sunscreen is crucial for maintaining effective protection against UV radiation. The frequency of reapplication depends on your activity and the UV index. If you are outdoors in direct sunlight for extended periods, sunscreen should be reapplied regularly to maintain its effectiveness. In contrast, if you spend most of your time indoors, a single morning application may be sufficient. Always reapply every 2 hours if sweating, swimming, or exposed to strong UV rays.",
+    spfChange: "If you don’t have the recommended SPF, you can select the one you have, and I’ll adjust the reapplication for you! But keep in mind the UV index—if it’s high, using low SPF factors won’t be effective at all!",
+    spfBackToRecommended: "Want to check the recommended SPF instead of the one you selected? This button is here for you!",
   };
 
   //show buddy messages
@@ -97,8 +101,13 @@ export default function Index() {
           const skinTypeStr = await AsyncStorage.getItem('skinType'); 
           const storedLat = await AsyncStorage.getItem('latitude');
           const storedLon = await AsyncStorage.getItem('longitude');
-          const storedUvIndex = await AsyncStorage.getItem('uvIndex')
+          const storedUvIndex = await AsyncStorage.getItem('uvIndex');
+          const reapCase = await AsyncStorage.getItem('caseNumber');
+          const reapMessage = await AsyncStorage.getItem('exposureResult');
+
           if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
+          if(reapCase) setReapplicationCase(parseInt(reapCase));
+          if (reapMessage) setReapplicationMessage(reapMessage);
 
           // If missing, default to 'N/A'
           if (!skinTypeStr || !storedLat || !storedLon) {
@@ -130,7 +139,7 @@ export default function Index() {
             
           }
         } catch (error) {
-          console.error('Error in HomeScreen fetching SPF:', error);
+          console.error('Error in HomeScreen fetching data from storage:', error);
         } finally {
           if (isActive) {
             setIsLoading(false);
@@ -198,7 +207,7 @@ export default function Index() {
   // decide reapplication logic
   useEffect(() => {
     if (activity === "outdoor_direct" && uvIndex && uvIndex > 6) {
-      setReapplicationTime(7200);
+      setReapplicationTime(7200); //2 hours
       setMessage('');
     } else {
       setReapplicationTime(null);
@@ -262,21 +271,36 @@ export default function Index() {
           </Pressable>
         ) : (
           <View>
-            <Text style={styles.heading1}>SPF {recommendedSPF}</Text>
+            <Text style={styles.heading1}>
+              SPF {recommendedSPF}
+              <TouchableOpacity onPress={() => showBuddyMessage("spf")}>
+                <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+              </TouchableOpacity>
+            </Text>
 
             {isSPFChangedManually ? (
               <Pressable 
                 style={styles.btnChange} 
                 onPress={resetSPF}
               >
-                <Text style={styles.btnChangelabel}>Get Recommended SPF</Text>
+                <Text style={styles.btnChangelabel}>
+                  Get Recommended SPF
+                  <TouchableOpacity onPress={() => showBuddyMessage("spfBackToRecommended")}>
+                    <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+                  </TouchableOpacity>
+                </Text>
               </Pressable>
             ) : (
               <TouchableOpacity 
                 style={styles.btnChange} 
                 onPress={() => setIsDropdownOpen(!isDropdownOpen)}
               > 
-                <Text style={styles.btnChangelabel}>Change SPF</Text>
+                <Text style={styles.btnChangelabel}>
+                  Change SPF
+                  <TouchableOpacity onPress={() => showBuddyMessage("spfChange")}>
+                    <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+                  </TouchableOpacity>
+                </Text>
               </TouchableOpacity>
             )}
           </View>
@@ -338,7 +362,7 @@ export default function Index() {
         {/* Reapplication */}
         <View style={styles.ReapplicationContainer}>
           <Text style={styles.label}>
-            Reapplication: 
+            Reapplication
             <TouchableOpacity onPress={() => showBuddyMessage("reapplication")}>
               <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
             </TouchableOpacity>
@@ -347,7 +371,7 @@ export default function Index() {
           {isLoading ? (
             <ActivityIndicator size="small" color="yellow" />
           ) : reapplicationTime !== null ? (
-            <Text style={styles.countdown}>Next in: {formatTime(reapplicationTime)}</Text>
+            <Text style={styles.countdown}>Reapply sunscreen in: {formatTime(reapplicationTime)}</Text>
           ) : (
             <Text style={styles.value}>No reapplication needed yet</Text>
           )}
