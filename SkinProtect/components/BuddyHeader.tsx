@@ -112,10 +112,10 @@ const BuddyHeader = forwardRef<BuddyHeaderRef>((props, ref) => {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    top: 20,
-    marginTop: 40,
-    left: 20,
+    //position: 'absolute',
+    //top: 20,
+    //marginTop: 40,
+    //left: 20,
   },
   buddyImage: {
     width: 70,

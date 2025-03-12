@@ -9,6 +9,9 @@ import { calculateSPF } from '@/services/CalculateRecommendedSPF';
 import Header, { BuddyHeaderRef } from '@/components/BuddyHeader';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/colors';
+//authentication
+import ProfileHeader from '@/components/ProfileHeader';
+
 
 
 export default function Index() {
@@ -168,8 +171,11 @@ export default function Index() {
 
   return (
     <View style={[styles.container, { paddingTop: safeTop }]}>
-      {/* Header component */}
-      <Header ref={buddyHeaderRef}/>
+      {/* Header components row */}
+      <View style={styles.headerRowContainer}>
+        <Header ref={buddyHeaderRef}/>
+        <ProfileHeader/>
+      </View>
       <View style={styles.main}>
         {/* weather image */}
         <View style={styles.weatherPictureContainer}>
@@ -220,6 +226,17 @@ const styles = StyleSheet.create({
     marginTop: 80,
     alignContent: 'center',
     justifyContent: 'center',
+  },
+  headerRowContainer:{
+    position: 'absolute',
+    top: 20, 
+    left: 0, 
+    right: 0,
+    zIndex: 1000,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
   },
   heading1: {
     color: '#fff',
