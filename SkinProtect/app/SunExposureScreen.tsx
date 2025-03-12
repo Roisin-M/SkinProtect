@@ -6,8 +6,9 @@ import { useNavigation, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '@/constants/colors';
-import CustomHeader from '@/components/BackHeader';
+import BackHeader from '@/components/BackHeader';
 import Header, { BuddyHeaderRef } from '@/components/BuddyHeader';
+import ProfileHeader from '@/components/ProfileHeader';
 
 export default function SunExposureScreen() {
   const [activity, setActivity] = useState('');
@@ -90,10 +91,12 @@ export default function SunExposureScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: safeTop }]}>
-        <CustomHeader />
-        <View style={styles.headerContainer}>
-          <Header ref={buddyHeaderRef}/>
-        </View>
+        {/* Header components row */}
+      <View style={styles.headerRowContainer}>
+        <Header ref={buddyHeaderRef}/>
+        <ProfileHeader/>
+      </View>
+      <BackHeader ></BackHeader>
 
         <Text style={styles.title}> 
           What type of activities will you be doing today?
@@ -152,11 +155,22 @@ const styles = StyleSheet.create({
   headerContainer: {
     marginBottom: 80,
   },
+  headerRowContainer:{
+    position: 'absolute',
+    top: 20, 
+    left: 0, 
+    right: 0,
+    zIndex: 1000,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    marginTop: 80,
+    marginTop: 30,
     textAlign: 'center',
     color: Colors.textLight,
   },
