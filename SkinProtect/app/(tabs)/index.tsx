@@ -10,6 +10,8 @@ import Header, { BuddyHeaderRef } from '@/components/BuddyHeader';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/colors';
 import { router } from 'expo-router';
+//authentication
+import ProfileHeader from '@/components/ProfileHeader';
 
 
 export default function Index() {
