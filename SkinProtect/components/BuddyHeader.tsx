@@ -11,6 +11,7 @@ export interface BuddyHeaderRef {
 const BuddyHeader = forwardRef<BuddyHeaderRef>((props, ref) => {
   const [showPopup, setShowPopup] = useState(false);
   const [isFirstLaunch, setIsFirstLaunch] = useState(false);
+  const [hasShownWelcomeBack, setHasShownWelcomeBack] = useState(false);
   const [message, setMessage] = useState('');
   const [showInfoMessage, setShowInfoMessage] = useState(false);
   const slideAnim = new Animated.Value(-20); // Start off-screen
@@ -25,18 +26,20 @@ const BuddyHeader = forwardRef<BuddyHeaderRef>((props, ref) => {
       const hasShownWelcomeBack = await AsyncStorage.getItem('hasShownWelcomeBack');
 
       if (!hasLaunched) {
-        setIsFirstLaunch(true);
+        //first launche ever message
         setMessage("Welcome! I am your sun protection buddy. Click any of the question mark icons if you are unsure about anything. Let's start with your UV profile to determine your skin type and calculate recommended SPF!");
         setShowPopup(true);
-        await AsyncStorage.setItem('hasLaunched', 'true');
+        setIsFirstLaunch(true);
+        await AsyncStorage.setItem('hasLaunched', 'true'); //mark as launched
       } else {
-        if (!hasShownWelcomeBack){
-            setMessage("Welcome back! Remember to reapply sunscreen.");
-            setShowPopup(true);
-            await AsyncStorage.setItem('hasShownWelcomeBack', 'true'); 
-            setTimeout(() => setShowPopup(false), 4000);
-        }
-      }
+        if (!hasShownWelcomeBack) {
+          // Not the first launch, but welcome back message hasn't been shown
+          setMessage("Welcome back! Remember to reapply sunscreen.");
+          setShowPopup(true);
+          await AsyncStorage.setItem("hasShownWelcomeBack", "true");
+          setHasShownWelcomeBack(true);
+          setTimeout(() => setShowPopup(false), 4000);
+      }}
     };
     checkFirstLaunch();
   }, []);

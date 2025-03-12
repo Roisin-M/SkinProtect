@@ -7,20 +7,19 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Page = () => {
   const router = useRouter();
-  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(null);
-  
-  //Function to clear AsyncStorage
-  const clearAsyncStorage = async () => {
-    try {
-      await AsyncStorage.clear();
-      console.log('AsyncStorage cleared');
-    } catch (error) {
-      console.error('Error clearing AsyncStorage:', error);
-    }
-  };
-  useEffect(() => {
-    clearAsyncStorage();
-  }, []);
+  const [isFirstLaunch, setIsFirstLaunch] = useState(false);
+  // //Function to clear AsyncStorage
+  // const clearAsyncStorage = async () => {
+  //   try {
+  //     await AsyncStorage.clear();
+  //     console.log('AsyncStorage cleared');
+  //   } catch (error) {
+  //     console.error('Error clearing AsyncStorage:', error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   clearAsyncStorage();
+  // }, []);
   
 
   //check if the app was already opened to know if we need onboarding

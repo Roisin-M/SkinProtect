@@ -12,7 +12,7 @@ import Header, { BuddyHeaderRef } from '@/components/BuddyHeader';
 export default function SunExposureScreen() {
   const [activity, setActivity] = useState('');
   const [exposure, setExposure] = useState('');
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState('N/A');
   const [caseNumber, setCaseNumber] = useState(0);
   const router = useRouter();
   const navigation = useNavigation();
@@ -61,7 +61,7 @@ export default function SunExposureScreen() {
     }
 
     let caseNumber = 0;
-    let message = '';
+    let message = 'N/A'; //default to N/A
 
     //figure out case number and message
     if (activity === 'Mostly Inside' || (activity === 'Both' && exposure === 'Not Exposed')) {

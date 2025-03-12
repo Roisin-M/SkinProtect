@@ -22,7 +22,7 @@ export default function Index() {
 
   //reapplication states
   const [reapplicationTime, setReapplicationTime] = useState<number | null>(null); // Countdown in seconds
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState('N/A');
 
   //ref for buddy header
   const buddyHeaderRef = useRef<BuddyHeaderRef>(null);
@@ -131,10 +131,10 @@ export default function Index() {
   useEffect(() => {
     if (activity === "outdoor_direct" && uvIndex && uvIndex > 6) {
       setReapplicationTime(7200);
-      setMessage(null);
+      setMessage('');
     } else {
       setReapplicationTime(null);
-      setMessage("Apply once in the morning, no need to reapply.");
+      setMessage("N/A");
     }
   
   }, [activity, uvIndex]); // <-- Move this outside of handleLocationUpdate
