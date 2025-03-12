@@ -12,6 +12,7 @@ import SkinQuiz from '@/components/SkinQuizComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getCurrentUvi } from '@/services/OpenWeatherService';
 import { Ionicons } from '@expo/vector-icons';
+import ProfileHeader from '@/components/ProfileHeader';
 
 export default function SummaryScreen() {
   // Use the safe area insets
@@ -77,8 +78,11 @@ const handleLocationUpdate = async (lat: number, lon: number) => {
     
     return (
         <View style={[styles.container, {paddingTop:safeTop}]}>
-            {/* Header component */}
-            <Header ref={buddyHeaderRef}/> 
+            {/* Header components row */}
+      <View style={styles.headerRowContainer}>
+        <Header ref={buddyHeaderRef}/>
+        <ProfileHeader/>
+      </View>
             <View style={styles.main}>
               <ScrollView >
                 <Text style={styles.heading}>
@@ -128,5 +132,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },icon: {
     marginLeft: 8,
+  },
+  headerRowContainer:{
+    position: 'absolute',
+    top: 20, 
+    left: 0, 
+    right: 0,
+    zIndex: 1000,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
   },
 });
