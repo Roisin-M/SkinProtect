@@ -9,6 +9,11 @@ import { calculateSPF } from '@/services/CalculateRecommendedSPF';
 import Header, { BuddyHeaderRef } from '@/components/BuddyHeader';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/colors';
+//authentication
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth, db } from '@/firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
+
 
 
 export default function Index() {
