@@ -17,6 +17,8 @@ const LocationHome = ({onLocationUpdate}: Props) => {
     const [currentRegion, setCurrentRegion] = useState<string | null>(null); // State to store region name
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     
+
+
     // 1) Load region from AsyncStorage
     useEffect(() => {
       const loadRegion = async () => {
@@ -185,7 +187,7 @@ const styles = StyleSheet.create({
         width: "100%", // Full width of the container
       },
       btn: {
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.prussianBlue,
         paddingVertical: 12,
         paddingHorizontal: 5,
         marginHorizontal:5,
@@ -199,7 +201,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
       },
       dropdownButton: {
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.prussianBlue,
         borderRadius: 10,
         paddingVertical: 12,
         paddingHorizontal: 5,
@@ -241,7 +243,7 @@ const styles = StyleSheet.create({
       },
       closeButton: {
         marginTop: 10,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.prussianBlue,
         paddingVertical: 10,
         borderRadius: 8,
         alignItems: 'center',

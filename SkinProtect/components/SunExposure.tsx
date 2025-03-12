@@ -27,27 +27,41 @@ const SunExposure = () => {
       loadData()
     }, [])
 
+    const clearData = async () => {
+      await AsyncStorage.multiRemove(['activity', 'exposure', 'exposureResult']);
+      setActivity(null);
+      setExposure(null);
+      setResult(null);
+    };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sun Exposure</Text>
-      <Text style={styles.description}>
-        Let's assess your sun exposure today.
-      </Text>
       {activity && exposure ? (
-        <View>
-          <Text style={styles.infoText}>Activity: {activity}</Text>
-          <Text style={styles.infoText}>Exposure: {exposure} </Text>
-          <Text style={styles.infoText}>Result: {result} </Text>
+        <View style={styles.activitiesContainer}>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>Activity: {activity}</Text>
+            <Text style={styles.infoText}>Exposure: {exposure} </Text>
+            <Text style={styles.infoText}>Result: {result} </Text>
+          </View>
+          <Pressable
+            style={styles.button}
+            onPress={() => router.push('/SunExposureScreen')}
+          >
+            <Text style={styles.buttonText}>Update</Text>
+          </Pressable>
         </View>
       ) : (
-        <Text style={styles.placeholderText}>Submit your activity and exposure.</Text>
+        <View style={styles.activitiesContainer}>
+          <Text style={styles.description}>Let's get your activities and exposure for today!</Text>
+          <Pressable
+            style={styles.button}
+            onPress={() => router.push('/SunExposureScreen')}
+          >
+            <Text style={styles.buttonText}>Add activities</Text>
+          </Pressable>
+        </View>
       )}
-      <Pressable
-        style={styles.button}
-        onPress={() => router.push("/SunExposureScreen")}
-      >
-        <Text style={styles.buttonText}>How much sun exposure will you have today?</Text>
-      </Pressable>
     </View>
   );
 };
@@ -70,11 +84,11 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   title: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "600",
-    color: Colors.softText,
+    color: Colors.textDark,
     marginBottom: 8,
-
+    textAlign: 'center',
   },
   description: {
     fontSize: 16,
@@ -82,22 +96,32 @@ const styles = StyleSheet.create({
     color: Colors.softText,
     marginBottom: 8,
   },
+  activitiesContainer: {
+    justifyContent: 'center',
+    textAlign: 'center',
+    alignItems: 'center',
+  },
   button: {
-    backgroundColor: Colors.blue,
+    backgroundColor: Colors.prussianBlue,
     paddingVertical: 12,
     paddingHorizontal: 5,
     borderRadius: 10,
-    marginTop:5,
+    marginTop:10,
+    width: '50%',
+    textAlign: 'center',
   },
   buttonText: {
-    color: '#fff',
+    color: Colors.textLight,
     fontSize: 16,
     textAlign: 'center',
+  },
+  infoBox:{
+    textAlign: 'left',
+    width:'100%',
   },
   infoText: {
     fontSize: 16,
-    color: Colors.black,
-    textAlign: 'center',
+    color: Colors.softText,
   },
   placeholderText: {
     fontSize: 14,

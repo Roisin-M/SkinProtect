@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
      },
      text:{
          fontSize: 16,
-         fontWeight: "600",
+         fontWeight: 'bold',
          color: Colors.softText,
          textAlign: 'left',
      },
@@ -78,12 +78,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginLeft: 'auto',
         marginRight: 'auto',
-
-        //flexDirection: 'row',
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.prussianBlue,
      },
      btnLabel: {
-        color: '#fff',
+        color: Colors.textLight,
         fontSize: 16,
      },
 })

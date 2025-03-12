@@ -38,6 +38,20 @@ export const Colors = {
   darkBackground: '#25292e',
   red:'#FF0000',
 
+  //color palette colors
+  prussianBlue: '#023047',
+  blueGreen: '#219Ebc',
+  skyBlue: '#8ecae6',
+  selectiveYellow: '#ffb703',
+  utOrange: '#fb8500',
+  paletteDark: '#151016',
+  paletteBlue: '#0a376e',
+  paletteDarkerYellow: '#fdba02',
+  paletteLighterYellow: '#fdba02',
+  seenThroughBg: 'rgba(211, 211, 211, 0.2)',
+  textLight: '#fff',
+  textDark: 'black',
+
     // UV-specific colors based on risk level
     uvLow: '#4CAF50', // Green (Low risk)
     uvModerate: '#FFC107', // Yellow (Moderate risk)

@@ -8,6 +8,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { calculateSPF } from '@/services/CalculateRecommendedSPF';
 import Header, { BuddyHeaderRef } from '@/components/BuddyHeader';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '@/constants/colors';
 
 
 export default function Index() {
@@ -15,10 +16,6 @@ export default function Index() {
   const [isLoading, setIsLoading] = useState(true);
   const { top: safeTop } = useSafeAreaInsets();
   const [uvIndex, setUvIndex] = useState<number | null>(null);
-
-  //pop ups with explanations
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalText, setModalText] = useState('');
 
   //mock user activity
   const [activity, setActivity] = useState("outdoor_direct");
@@ -44,7 +41,7 @@ export default function Index() {
     }
   };
 
-  // Function to clear AsyncStorage
+  // //Function to clear AsyncStorage
   // const clearAsyncStorage = async () => {
   //   await AsyncStorage.clear();
   //   console.log('AsyncStorage cleared');
@@ -62,17 +59,17 @@ export default function Index() {
   let dayTime = true;
   
   //method to determine if it is day or night
-  useEffect(() => {
-    const currentHour = new Date().getHours();
-    if (currentHour >= 6 && currentHour < 18){
-      //daytime
-      setImageSource(require('../../assets/images/sun.png'));
-    } else {
-      //nighttime
-      dayTime = false;
-      setImageSource(require('../../assets/images/moon.png'));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const currentHour = new Date().getHours();
+  //   if (currentHour >= 6 && currentHour < 18){
+  //     //daytime
+  //     setImageSource(require('../../assets/images/sun.png'));
+  //   } else {
+  //     //nighttime
+  //     dayTime = false;
+  //     setImageSource(require('../../assets/images/moon.png'));
+  //   }
+  // }, []);
 
 
   // Re-run every time this screen is focused
@@ -194,10 +191,12 @@ export default function Index() {
         </Text>
 
         <View style={styles.ReapplicationContainer}>
-          <Text style={styles.label}>Reapplication:</Text>
-          <TouchableOpacity onPress={() => showBuddyMessage("reapplication")}>
-            <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
-          </TouchableOpacity>
+          <Text style={styles.label}>Reapplication: 
+            <TouchableOpacity onPress={() => showBuddyMessage("reapplication")}>
+              <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+            </TouchableOpacity>
+          </Text>
+          
           {reapplicationTime !== null ? (
             <Text style={styles.countdown}>Next in: {formatTime(reapplicationTime)}</Text>
           ) : (
@@ -213,7 +212,7 @@ export default function Index() {
 const styles = StyleSheet.create({
  container: {
     flex: 1,
-    backgroundColor: '#023047',
+    backgroundColor: Colors.prussianBlue,
     //rjustifyContent: 'center',
     //alignItems: 'center',
   },
@@ -228,25 +227,29 @@ const styles = StyleSheet.create({
     fontSize: 45,
     fontWeight: 'bold',
     marginBottom: 16,
+    margin: 10,
   },
   heading2: {
     color: '#fff',
     textAlign: 'center',
     fontSize: 20,
-    marginBottom: 16,
+    marginBottom: 25,
   },
   weatherPictureContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 20
+    marginTop: 60,
+    marginBottom: 20,
   },
   weatherPicture: {
     width: 250,
     height: 250,
   },
   ReapplicationContainer: {
-    backgroundColor: 'rgba(211, 211, 211, 0.2)', // LightGray with 50% opacity
-    padding: 20,
+    backgroundColor: Colors.seenThroughBG,
+    paddingHorizontal:10,
+    paddingVertical: 20,
+    margin: 10,
     borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
@@ -262,26 +265,16 @@ const styles = StyleSheet.create({
   icon: {
     marginLeft: 8,
   },
-  SPFContainer:{
-    backgroundColor: '#FFB703',
-    borderRadius: 100,
-    width: 200,
-    height:200,
-    padding: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 16,
-  },
   countdown: {
     fontSize: 20, 
     fontWeight: 'bold', 
     color: '#ffef00'
   },
   label: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#fff',
     marginBottom: 8,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
   value: {
     fontSize: 20,

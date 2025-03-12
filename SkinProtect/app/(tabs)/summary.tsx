@@ -1,16 +1,17 @@
-import { View,  StyleSheet, ScrollView, Text } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import { View,  StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import SunExposure from "@/components/SunExposure";
 import UVHome from '@/components/UVHome';
 //import getUVIndex from '@/services/OpenWeatherService';
 //location imports
 import LocationHome from '@/components/LocationHome';
-import Header from '@/components/BuddyHeader';
+import Header, { BuddyHeaderRef } from '@/components/BuddyHeader';
 import SkinQuiz from '@/components/SkinQuizComponent';
 //import for storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getCurrentUvi } from '@/services/OpenWeatherService';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SummaryScreen() {
   // Use the safe area insets
@@ -19,6 +20,21 @@ export default function SummaryScreen() {
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [uvIndex, setUvIndex] = useState<number | null>(null);
+
+  //ref for buddy header
+  const buddyHeaderRef = useRef<BuddyHeaderRef>(null);
+
+  //const with info messages
+  const infoMessages = {
+    info: "In this section you should provide all the important details to get the best SPF recommendation and reapplication suggestion! Just a few quick steps, and you’ll know exactly how to stay protected while enjoying the sun! 🌞✨",
+  };
+
+  //show buddy messages
+  const showBuddyMessage = (key: keyof typeof infoMessages) => {
+    if (buddyHeaderRef.current) {
+      buddyHeaderRef.current.updateMessage(infoMessages[key], true);
+    }
+  };
 
   // load location + uv from storage
   useEffect(() => {
@@ -62,15 +78,17 @@ const handleLocationUpdate = async (lat: number, lon: number) => {
     return (
         <View style={[styles.container, {paddingTop:safeTop}]}>
             {/* Header component */}
-            <Header/> 
+            <Header ref={buddyHeaderRef}/> 
             <View style={styles.main}>
               <ScrollView >
                 <Text style={styles.heading}>
                   Skin & Sun
+                  <TouchableOpacity onPress={() => showBuddyMessage("info")}>
+                    <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+                  </TouchableOpacity>
                 </Text>
                 {/* Location Component */}
-                <LocationHome 
-                onLocationUpdate={handleLocationUpdate} />
+                <LocationHome onLocationUpdate={handleLocationUpdate} />
                 {/* UV Index component */}
                 <UVHome uvIndex={uvIndex}/> 
                 {/* Skin Quiz Component */}
@@ -108,10 +126,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 40,
     fontWeight: 'bold',
+  },icon: {
+    marginLeft: 8,
   },
-//   button: {
-//     fontSize: 20,
-//     textDecorationLine: 'underline',
-//     color: '#fff',
-//   },
 });
