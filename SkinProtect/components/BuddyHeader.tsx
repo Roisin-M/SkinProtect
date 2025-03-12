@@ -11,7 +11,6 @@ export interface BuddyHeaderRef {
 const BuddyHeader = forwardRef<BuddyHeaderRef>((props, ref) => {
   const [showPopup, setShowPopup] = useState(false);
   const [isFirstLaunch, setIsFirstLaunch] = useState(false);
-  const [hasShownWelcomeBack, setHasShownWelcomeBack] = useState(false);
   const [message, setMessage] = useState('');
   const [showInfoMessage, setShowInfoMessage] = useState(false);
   const slideAnim = new Animated.Value(-20); // Start off-screen
@@ -23,7 +22,6 @@ const BuddyHeader = forwardRef<BuddyHeaderRef>((props, ref) => {
   useEffect(() => {
     const checkFirstLaunch = async () => {
       const hasLaunched = await AsyncStorage.getItem('hasLaunched');
-      const hasShownWelcomeBack = await AsyncStorage.getItem('hasShownWelcomeBack');
 
       if (!hasLaunched) {
         //first launche ever message
@@ -32,14 +30,13 @@ const BuddyHeader = forwardRef<BuddyHeaderRef>((props, ref) => {
         setIsFirstLaunch(true);
         await AsyncStorage.setItem('hasLaunched', 'true'); //mark as launched
       } else {
-        if (!hasShownWelcomeBack) {
+        //if (!hasShownWelcomeBack) {
           // Not the first launch, but welcome back message hasn't been shown
           setMessage("Welcome back! Remember to reapply sunscreen.");
           setShowPopup(true);
-          await AsyncStorage.setItem("hasShownWelcomeBack", "true");
-          setHasShownWelcomeBack(true);
           setTimeout(() => setShowPopup(false), 4000);
-      }}
+      //}
+    }
     };
     checkFirstLaunch();
   }, []);
