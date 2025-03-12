@@ -250,7 +250,7 @@ export default function Index() {
         {/* SPF recommendation */}
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="yellow" />
+            <ActivityIndicator size="large" color={Colors.highLightYeelow} />
             <Text style={styles.loadingText}>Calculating SPF...</Text>
           </View>
         ) : recommendedSPF === 'N/A' ? (
@@ -331,7 +331,7 @@ export default function Index() {
             </>
           )}
           <TouchableOpacity onPress={() => showBuddyMessage("uvIndex")}>
-            <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+            <Ionicons name="help-circle" color={Colors.highLightYeelow} size={24} style={styles.icon} />
           </TouchableOpacity>
         </Text>
 
@@ -340,12 +340,12 @@ export default function Index() {
           <Text style={styles.label}>
             Reapplication: 
             <TouchableOpacity onPress={() => showBuddyMessage("reapplication")}>
-              <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+              <Ionicons name="help-circle" color={Colors.highLightYeelow} size={24} style={styles.icon} />
             </TouchableOpacity>
           </Text>
           
           {isLoading ? (
-            <ActivityIndicator size="small" color="yellow" />
+            <ActivityIndicator size="small" color={Colors.highLightYeelow} />
           ) : reapplicationTime !== null ? (
             <Text style={styles.countdown}>Next in: {formatTime(reapplicationTime)}</Text>
           ) : (
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   heading1: {
-    color: '#fff',
+    color: Colors.textLight,
     textAlign: 'center',
     fontSize: 45,
     fontWeight: 'bold',
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   heading2: {
-    color: '#fff',
+    color: Colors.textLight,
     textAlign: 'center',
     fontSize: 20,
     marginBottom: 25,
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   loadingText: {
-    color: "white",
+    color: Colors.textLight,
     fontSize: 18,
     marginLeft: 10,
   },
@@ -472,18 +472,18 @@ const styles = StyleSheet.create({
   countdown: {
     fontSize: 20, 
     fontWeight: 'bold', 
-    color: '#ffef00'
+    color: Colors.highLightYeelow,
   },
   label: {
     fontSize: 20,
-    color: '#fff',
+    color: Colors.textLight,
     marginBottom: 8,
     fontWeight: 'bold',
   },
   value: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffef00', 
+    color: Colors.highLightYeelow, 
   },
   modalOverlay: {
     flex: 1,

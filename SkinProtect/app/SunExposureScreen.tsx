@@ -98,7 +98,7 @@ export default function SunExposureScreen() {
         <Text style={styles.title}> 
           What type of activities will you be doing today?
           <TouchableOpacity onPress={() => showBuddyMessage("activities")}>
-              <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+              <Ionicons name="help-circle" color={Colors.highLightYeelow} size={24} style={styles.icon} />
           </TouchableOpacity>
         </Text>
         <View style={styles.buttonContainer}>
@@ -118,7 +118,7 @@ export default function SunExposureScreen() {
             <Text style={styles.subtitle}>
               Will you be exposed to the sun?
               <TouchableOpacity onPress={() => showBuddyMessage("exposure")}>
-                <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+                <Ionicons name="help-circle" color={Colors.highLightYeelow} size={24} style={styles.icon} />
               </TouchableOpacity>
             </Text>
             <View style={styles.buttonContainer}>

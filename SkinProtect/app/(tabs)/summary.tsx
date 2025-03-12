@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getCurrentUvi } from '@/services/OpenWeatherService';
 import { Ionicons } from '@expo/vector-icons';
 import ProfileHeader from '@/components/ProfileHeader';
+import { Colors } from '@/constants/colors';
 
 export default function SummaryScreen() {
   // Use the safe area insets
@@ -88,7 +89,7 @@ const handleLocationUpdate = async (lat: number, lon: number) => {
                 <Text style={styles.heading}>
                   Skin & Sun
                   <TouchableOpacity onPress={() => showBuddyMessage("info")}>
-                    <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+                    <Ionicons name="help-circle" color={Colors.highLightYeelow} size={24} style={styles.icon} />
                   </TouchableOpacity>
                 </Text>
                 {/* Location Component */}
@@ -108,7 +109,7 @@ const handleLocationUpdate = async (lat: number, lon: number) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#023047',
+    backgroundColor: Colors.prussianBlue,
     //alignItems: 'center',
     //justifyContent: 'center',
   },
@@ -121,12 +122,12 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   text: {
-    color: '#fff',
+    color: Colors.textLight,
     textAlign: 'center',
     marginTop: 20,
   },
   heading: {
-    color: '#fff',
+    color: Colors.textLight,
     textAlign: 'center',
     fontSize: 40,
     fontWeight: 'bold',

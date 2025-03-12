@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, View, StyleSheet, ScrollView } from 'react-native';
 import AboutPageAccordion from '@/components/AboutPageAccordion';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Colors } from '@/constants/colors';
 
 export default function AboutScreen() {
   const { top: safeTop } = useSafeAreaInsets();
@@ -57,25 +58,25 @@ export default function AboutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#023047',
+    backgroundColor: Colors.prussianBlue,
     // justifyContent: 'center',
     // alignItems: 'center',
   },
   heading1: {
-    color: 'white',
+    color: Colors.textLight,
     fontSize: 40,
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 20,
   },
   subheading: {
-    color: 'white',
+    color: Colors.textLight,
     fontSize: 20,
     textAlign: 'left',
     padding: 20,
 
   },
   text: {
-    color: '#fff',
+    color: Colors.textLight,
   },
 });
