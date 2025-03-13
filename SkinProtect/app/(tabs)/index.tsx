@@ -14,6 +14,10 @@ import { router } from 'expo-router';
 import ProfileHeader from '@/components/ProfileHeader';
 //reapplication
 import getReapplicationRecommendation from '../utils/getReapplicationRecommendation';
+//countdown
+import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
+import * as Progress from 'react-native-progress';
+import ProgressBar from '@/components/ProgressBar';
 
 
 export default function Index() {
@@ -36,8 +40,8 @@ export default function Index() {
   const [activity, setActivity] = useState("outdoor_direct");
 
   //reapplication states
-  const [reapplicationTime, setReapplicationTime] = useState<number | null>(null); // Countdown in seconds
-  const [message, setMessage] = useState('N/A');
+  const [reapplicationTime, setReapplicationTime] = useState<number | null>(null); // Countdown will be in seconds
+  const [message, setMessage] = useState('Not Available');
   const [reapplicationActivity, setReapplicationActivity] = useState('');
   const [reapplicationExposure, setReapplicationExposure] = useState('');
 
@@ -258,6 +262,13 @@ export default function Index() {
     return `${hrs}:${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
+  //colors for countdown
+  const countdownColors = [
+    ['#004777', 0.33],  // Assuming this is how colors are defined
+    ['#F7B801', 0.33],
+    ['#A30000', 1]      // Assuming you want it with full opacity
+  ];
+
   return (
     <View style={[styles.container, { paddingTop: safeTop }]}>
       {/* Header components row */}
@@ -385,10 +396,26 @@ export default function Index() {
           
           {isLoading ? (
             <ActivityIndicator size="small" color="yellow" />
-          ) : reapplicationTime !== null ? (
-            <Text style={styles.countdown}>Reapply sunscreen in: {formatTime(reapplicationTime)}</Text>
+          ) : reapplicationTime !== null && reapplicationTime > 0 ? (
+            // <CountdownCircleTimer
+            //   isPlaying
+            //   duration={reapplicationTime}
+            //   size={80} 
+            //   colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
+            //   colorsTime={[10, 6, 3, 0]}
+            //   onComplete={() => ({ shouldRepeat: true, delay: 2 })}
+            // >
+            //   {({ remainingTime }) => (
+            //     <Text style={styles.countdown}>{formatTime(remainingTime)}</Text>
+            //   )}
+            // </CountdownCircleTimer>
+            <View>
+              {/* <Progress.Bar progress={reapplicationTime} width={200} color={Colors.paletteDarkerYellow}/> */}
+              <ProgressBar duration={reapplicationTime} />
+              <Text style={styles.countdown}>Reapply sunscreen in: {formatTime(reapplicationTime)}</Text>
+            </View>
           ) : (
-            <Text style={styles.value}>No reapplication needed yet</Text>
+            <Text style={styles.value}>{message}</Text>
           )}
         </View>
 
