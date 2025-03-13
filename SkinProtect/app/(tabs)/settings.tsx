@@ -9,6 +9,7 @@ import { Colors } from '@/constants/colors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { userSignUpSchema, UserSignUpForm } from '@/validation/userSchema';
 import { useForm, Controller } from 'react-hook-form';
+import { useFocusEffect } from 'expo-router';
 
 export default function SettingsScreen() {
   const { top: safeTop } = useSafeAreaInsets();
@@ -18,12 +19,27 @@ export default function SettingsScreen() {
   const [profile, setProfile] = useState<any>(null);
   const [formMode, setFormMode] = useState<'login' | 'signup'>('login');
   const [loginError, setLoginError] = useState<string|null>(null);
+  const [signUpError, setSignUpError]= useState<string|null>(null);
 
   //state for login/signup form
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // const [firstName, setFirstName] = useState('');
   // const [lastName, setlastName] = useState('');
+
+useFocusEffect(
+  React.useCallback(() => {
+    return () => {
+      // Screen is being unfocused, reset fields and errors
+      setLoginError(null);
+      setSignUpError(null);
+      setEmail('');
+      setPassword('');
+      reset(); 
+    };
+  }, [])
+);
+
 
   //Form using react hook form and zod schema - "Sign Up"
   const {
@@ -99,7 +115,14 @@ export default function SettingsScreen() {
         //clear the form 
         reset();
       } catch (error: any) {
-        alert("Signup error: " + error.message);
+        if (error.code === 'auth/email-already-in-use' ){
+          setSignUpError(data.email + ' already has an account. Use another email or login.');
+          reset();
+        }
+        else{
+          alert("Signup error: " + error.message);
+          reset();
+        }
       }
     };
 
@@ -124,6 +147,18 @@ export default function SettingsScreen() {
     } catch (error: any) {
       alert('Logout error: ' + error.message);
     }
+  };
+
+  const toggleToLogin = () => {
+    setLoginError(null); 
+    reset();           
+    setFormMode("login");
+  };
+  
+  const toggleToSignup = () => {
+    setLoginError(null);
+    reset();   
+    setFormMode("signup");
   };
   
  //If user is logged in, show welcome + logout
@@ -170,7 +205,6 @@ return (
 
         {loginError && <Text style={styles.errorText}>{loginError}</Text>}
 
-
         <View style={styles.buttonRow}>
           <Pressable style={styles.btn} onPress={handleLogin}>
             <Text style={styles.btnText}>Login</Text>
@@ -179,7 +213,7 @@ return (
 
         <View style={styles.switchContainer}>
           <Text style={styles.text}>Don’t have an account?</Text>
-          <Pressable style={styles.btn} onPress={() => setFormMode('signup')}>
+          <Pressable style={styles.btn} onPress={toggleToSignup}>
             <Text style={styles.btnText}>Sign Up</Text>
           </Pressable>
         </View>
@@ -249,6 +283,7 @@ return (
       {errors.email && (
         <Text style={styles.errorText}>{errors.email.message}</Text>
       )}
+      {signUpError && <Text style={styles.errorText}>{signUpError}</Text>}
 
       <Text style={styles.label}>Password</Text>
       <Controller
@@ -282,7 +317,7 @@ return (
 
       <View style={styles.switchContainer}>
         <Text style={styles.text}>Already have an account?</Text>
-        <Pressable style={styles.btn} onPress={() => setFormMode("login")}>
+        <Pressable style={styles.btn} onPress={toggleToLogin}>
           <Text style={styles.btnText}>Login</Text>
         </Pressable>
       </View>
