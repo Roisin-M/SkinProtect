@@ -6,6 +6,7 @@ import skinQuizQuestions from '@/assets/json/skinQuizQuestions.json'
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { updateUserSkinType } from '@/services/profileService';
 
 export default function SkinQuizScreen() {
   // Use the safe area insets
@@ -62,6 +63,12 @@ export default function SkinQuizScreen() {
   
       // Save result in AsyncStorage
       await AsyncStorage.setItem('skinType', result);
+
+      try{
+        await updateUserSkinType(result);
+      } catch(error){
+        console.log("failed to update user skin type:", error);
+      }
   
       // Navigate back to tabs screen
       router.push('/(tabs)');

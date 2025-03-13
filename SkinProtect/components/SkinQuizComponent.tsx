@@ -3,8 +3,10 @@ import React, {useState, useEffect} from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { Colors } from '@/constants/colors'
 import { DarkTheme } from '@react-navigation/native'
-import { useRouter, useLocalSearchParams } from 'expo-router'
+import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { auth } from '@/firebaseConfig'
+import { fetchUserProfile, updateUserSkinType } from '@/services/profileService'
 
 type Props = {}
 
@@ -13,17 +15,37 @@ const SkinQuiz = (props: Props) => {
     //const { skinType } = useLocalSearchParams(); //get the result from query
     const [skinType, setSkinType] = useState<string | null>(null);
 
-    useEffect(() => {
-        //load stored skin type when component mounts
-        const loadSkinType = async () => {
-            const storedSkinType = await AsyncStorage.getItem('skinType');
-            if (storedSkinType) {
-                setSkinType(storedSkinType);
-            }
-        };
-
+    const loadSkinType = async () => {
+        const user = auth.currentUser;
+        if (user) {
+          // If logged in => check Firestore
+          const profile = await fetchUserProfile();
+          if (profile && profile.skinType) {
+            setSkinType(profile.skinType);
+            return; // done
+          }
+        }
+        // If logged out OR no skinType in doc fallback to AsyncStorage
+        const storedSkinType = await AsyncStorage.getItem('skinType');
+        if (storedSkinType) {
+          setSkinType(storedSkinType);
+        } else {
+          setSkinType(null);
+        }
+      };
+    
+      // On first mount, load once
+      useEffect(() => {
         loadSkinType();
-    }, []);
+      }, []);
+    
+      //re-load every time screen in focus
+      useFocusEffect(
+        React.useCallback(() => {
+          loadSkinType();
+        }, [])
+      );
+      
 
     return (
         <View style={styles.container}>

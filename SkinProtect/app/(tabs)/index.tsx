@@ -12,9 +12,12 @@ import { Colors } from '@/constants/colors';
 import { router } from 'expo-router';
 //authentication
 import ProfileHeader from '@/components/ProfileHeader';
+import { auth } from '@/firebaseConfig';
+import { fetchUserProfile } from '@/services/profileService';
 
 
 export default function Index() {
+  const [skinType, setSkinType] = useState<string|null>(null);
   const [recommendedSPF, setRecommendedSPF] = useState<string | number>('...');
   const [isLoading, setIsLoading] = useState(true);
   const { top: safeTop } = useSafeAreaInsets();
@@ -84,66 +87,87 @@ export default function Index() {
     }
   }, []);
 
+  //Load the user's skin type
+  const loadSkinType = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      // If logged in => check Firestore
+      const profile = await fetchUserProfile();
+      if (profile && profile.skinType) {
+        setSkinType(profile.skinType);
+        return; // done
+      }
+    }
+    // If logged out OR no skinType in doc fallback to AsyncStorage
+    const storedSkinType = await AsyncStorage.getItem('skinType');
+    if (storedSkinType) {
+      setSkinType(storedSkinType);
+    } else {
+      setSkinType(null);
+    }
+  };
+
+  const fetchSPFData = async () => {
+      //Get UV + Skin Type from AsyncStorage
+      const storedLat = await AsyncStorage.getItem('latitude');
+      const storedLon = await AsyncStorage.getItem('longitude');
+      const storedUvIndex = await AsyncStorage.getItem('uvIndex')
+      if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
+
+      // If missing, default to 'N/A'
+      if (!skinType || !storedLat || !storedLon) {
+          setRecommendedSPF('N/A');
+      } 
+      else{
+        //check if it is day time
+       if (dayTime == true) {
+          //const uvNumber = parseFloat(uvIndex);
+            const lat = parseFloat(storedLat);
+            const lon = parseFloat(storedLon);
+            const uvDailyData = await getDailyUvi(lat, lon);
+            // Calculate the SPF
+            const spf = await calculateSPF(uvDailyData, skinType);
+            setRecommendedSPF(spf);
+  
+            // Save the calculated SPF to AsyncStorage
+            try {
+              await AsyncStorage.setItem('calculatedSPF', JSON.stringify(spf));
+            } catch (error) {
+              console.error('Error saving SPF to AsyncStorage:', error);
+            }
+          }
+          else{
+            setRecommendedSPF('Not Needed');
+          }
+      }
+    };
 
   // Re-run every time this screen is focused
   useFocusEffect(
     React.useCallback(() => {
       let isActive = true;
-
-      const fetchData = async () => {
+      const fetchEverything = async ()=>{
         setIsLoading(true);
-        try {
-          //Get UV + Skin Type from AsyncStorage
-          const skinTypeStr = await AsyncStorage.getItem('skinType'); 
-          const storedLat = await AsyncStorage.getItem('latitude');
-          const storedLon = await AsyncStorage.getItem('longitude');
-          const storedUvIndex = await AsyncStorage.getItem('uvIndex')
-          if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
-
-          // If missing, default to 'N/A'
-          if (!skinTypeStr || !storedLat || !storedLon) {
-            if (isActive) {
-              setRecommendedSPF('N/A');
-            }
-          } else {
-            //check if it is day time
-            if (dayTime == true) {
-              //const uvNumber = parseFloat(uvIndex);
-              const lat = parseFloat(storedLat);
-              const lon = parseFloat(storedLon);
-              const uvDailyData = await getDailyUvi(lat, lon);
-
-              // Calculate the SPF
-              const spf = await calculateSPF(uvDailyData, skinTypeStr);
-              if (isActive) {
-                setRecommendedSPF(spf);
-                // Save the calculated SPF to AsyncStorage
-                try {
-                  await AsyncStorage.setItem('calculatedSPF', JSON.stringify(spf));
-                } catch (error) {
-                  console.error('Error saving SPF to AsyncStorage:', error);
-                }
-              }
-            } else {
-              setRecommendedSPF('Not Needed');
-            }
-            
+        try{
+          //load user or guest skin type
+          await loadSkinType();
+          if(isActive){
+            await fetchSPFData();
           }
-        } catch (error) {
+        } catch(error){
           console.error('Error in HomeScreen fetching SPF:', error);
-        } finally {
-          if (isActive) {
+        } finally{
+          if(isActive){
             setIsLoading(false);
           }
         }
       };
-      fetchData();
-
-      // Cleanup: if user leaves screen before fetch finishes
+      fetchEverything();
+      // if user leaves screen before fetch finishes
       return () => {
         isActive = false;
       };
-    }, [])
+    }, [dayTime])
   );
 
   // data for changing spf value

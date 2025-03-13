@@ -14,12 +14,13 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useFocusEffect } from 'expo-router';
-
+import { router, useFocusEffect } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth, db } from '../../firebaseConfig';
 import { signIn, logOut, signUpWithProfile } from '@/services/authService';
 import { Colors } from '@/constants/colors';
 import { userSignUpSchema, UserSignUpForm } from '@/validation/userSchema';
+import { updateUserSkinType } from '@/services/profileService';
 
 export default function SettingsScreen() {
   const { top: safeTop } = useSafeAreaInsets();
@@ -94,6 +95,7 @@ export default function SettingsScreen() {
       await signIn(email, password);
       setEmail('');
       setPassword('');
+
     } catch (error: any) {
       if (
         error.code === 'auth/user-not-found' ||
@@ -122,6 +124,11 @@ export default function SettingsScreen() {
       );
       reset();
       setSignUpError(null);
+      const storedSkinType = await AsyncStorage.getItem('skinType');
+      //update user's skintype in db with ^
+      if(storedSkinType){
+        await updateUserSkinType(storedSkinType);
+      }
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {
         setSignUpError(
