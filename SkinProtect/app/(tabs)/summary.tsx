@@ -84,8 +84,9 @@ const handleLocationUpdate = async (lat: number, lon: number) => {
         <Header ref={buddyHeaderRef}/>
         <ProfileHeader/>
       </View>
-            <View style={styles.main}>
+            
               <ScrollView >
+              <View style={styles.main}>
                 <Text style={styles.heading}>
                   Skin & Sun
                   <TouchableOpacity onPress={() => showBuddyMessage("info")}>
@@ -100,8 +101,8 @@ const handleLocationUpdate = async (lat: number, lon: number) => {
                 <SkinQuiz/>
                 {/*Sun Exposure Component*/}
                 <SunExposure /> 
+                 </View>
               </ScrollView>
-            </View>
         </View>
     );
 }
