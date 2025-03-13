@@ -12,6 +12,8 @@ import { Colors } from '@/constants/colors';
 import { router } from 'expo-router';
 //authentication
 import ProfileHeader from '@/components/ProfileHeader';
+//reapplication
+import getReapplicationRecommendation from '../utils/getReapplicationRecommendation';
 
 
 export default function Index() {
@@ -20,7 +22,7 @@ export default function Index() {
   const { top: safeTop } = useSafeAreaInsets();
   const [uvIndex, setUvIndex] = useState<number | null>(null);
   const [isSPFChangedManually, setIsSPFChangedManually] = useState(false);
-  
+  const [skinType, setSkinType] = useState('');
   //spf dropdown
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
@@ -36,8 +38,8 @@ export default function Index() {
   //reapplication states
   const [reapplicationTime, setReapplicationTime] = useState<number | null>(null); // Countdown in seconds
   const [message, setMessage] = useState('N/A');
-  const [reapplicationCase, setReapplicationCase] = useState<number | null>(null);
-  const [reapplicationMessage, setReapplicationMessage] = useState('');
+  const [reapplicationActivity, setReapplicationActivity] = useState('');
+  const [reapplicationExposure, setReapplicationExposure] = useState('');
 
   //ref for buddy header
   const buddyHeaderRef = useRef<BuddyHeaderRef>(null);
@@ -46,7 +48,7 @@ export default function Index() {
   const infoMessages = {
     spf: "SPF (Sun Protection Factor) indicates how well sunscreen protects against UVB rays. Higher SPF provides stronger protection.",
     uvIndex: "UV Index measures the level of ultraviolet radiation from the sun. Higher values mean stronger UV exposure and greater risk of skin damage.",
-    reapplication: "Reapplying sunscreen is crucial for maintaining effective protection against UV radiation. The frequency of reapplication depends on your activity and the UV index. If you are outdoors in direct sunlight for extended periods, sunscreen should be reapplied regularly to maintain its effectiveness. In contrast, if you spend most of your time indoors, a single morning application may be sufficient. Always reapply every 2 hours if sweating, swimming, or exposed to strong UV rays.",
+    reapplication: "Reapplying sunscreen is crucial for maintaining effective protection against UV radiation. The frequency of reapplication depends on your activity and the UV index. If you are outdoors in direct sunlight for extended periods, sunscreen should be reapplied regularly to maintain its effectiveness. In contrast, if you spend most of your time indoors, a single morning application may be sufficient. Always reapply every 2 hours if sweating, swimming, or exposed to strong UV rays. But keep in mind this is only a recommendation and you should still consider all factors when deciding if you need to reapply more frequently!",
     spfChange: "If you don’t have the recommended SPF, you can select the one you have, and I’ll adjust the reapplication for you! But keep in mind the UV index—if it’s high, using low SPF factors won’t be effective at all!",
     spfBackToRecommended: "Want to check the recommended SPF instead of the one you selected? This button is here for you!",
   };
@@ -97,17 +99,19 @@ export default function Index() {
       const fetchData = async () => {
         setIsLoading(true);
         try {
-          //Get UV + Skin Type from AsyncStorage
+          //Get UV + Skin Type + Activities from AsyncStorage
           const skinTypeStr = await AsyncStorage.getItem('skinType'); 
           const storedLat = await AsyncStorage.getItem('latitude');
           const storedLon = await AsyncStorage.getItem('longitude');
           const storedUvIndex = await AsyncStorage.getItem('uvIndex');
-          const reapCase = await AsyncStorage.getItem('caseNumber');
-          const reapMessage = await AsyncStorage.getItem('exposureResult');
+          const reapActivity = await AsyncStorage.getItem('activity');
+          const reapExposure = await AsyncStorage.getItem('exposure');
+          const skinType = await AsyncStorage.getItem('skinType');
 
           if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
-          if(reapCase) setReapplicationCase(parseInt(reapCase));
-          if (reapMessage) setReapplicationMessage(reapMessage);
+          if(reapActivity) setReapplicationActivity(reapActivity);
+          if (reapExposure) setReapplicationExposure(reapExposure);
+          if (skinType) setSkinType(skinType);
 
           // If missing, default to 'N/A'
           if (!skinTypeStr || !storedLat || !storedLon) {
@@ -204,19 +208,30 @@ export default function Index() {
       }
   };
 
-  // decide reapplication logic
+  // get reapplication recommendation
+  const reapRecommendation = getReapplicationRecommendation(skinType, uvIndex, recommendedSPF, reapplicationActivity, reapplicationExposure);
+  //method to set corresponding message and reapplication time based on the result
   useEffect(() => {
-    if (activity === "outdoor_direct" && uvIndex && uvIndex > 6) {
-      setReapplicationTime(7200); //2 hours
-      setMessage('');
-    } else {
-      setReapplicationTime(null);
-      setMessage("N/A");
-    }
-  
-  }, [activity, uvIndex]); // <-- Move this outside of handleLocationUpdate
-  
+    if (reapRecommendation === null) return;
 
+    if (reapRecommendation === 1) {
+      setReapplicationTime(0); //no reapplication here needed
+      setMessage('No Need for SPF today');
+    } 
+    else if (reapRecommendation === 2) {
+      setReapplicationTime(0); //no reapplication here needed
+      setMessage('Apply only in the morning');
+    }
+    else if (reapRecommendation === 3){
+      setReapplicationTime(14400); //4 hours in seconds
+      setMessage('Reapply every 4 hours');
+    }
+    else if (reapRecommendation === 4){
+      setReapplicationTime(7200); //2 hours in seconds
+      setMessage('Reapply every 2 hours');
+    }
+  }, [reapRecommendation]);
+  
   //countdown timer logic
   useEffect(() => {
     if (reapplicationTime === null) return;

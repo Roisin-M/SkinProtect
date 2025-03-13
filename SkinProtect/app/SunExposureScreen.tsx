@@ -12,8 +12,8 @@ import Header, { BuddyHeaderRef } from '@/components/BuddyHeader';
 export default function SunExposureScreen() {
   const [activity, setActivity] = useState('');
   const [exposure, setExposure] = useState('');
-  const [result, setResult] = useState('N/A');
-  const [caseNumber, setCaseNumber] = useState(0);
+  //const [result, setResult] = useState('N/A');
+  //const [caseNumber, setCaseNumber] = useState(0);
   const router = useRouter();
   const navigation = useNavigation();
 
@@ -75,8 +75,8 @@ export default function SunExposureScreen() {
       message = 'Reapply SPF every 2 hours.';
     }
 
-    setCaseNumber(caseNumber);
-    setResult(message);
+    //setCaseNumber(caseNumber);
+    //setResult(message);
 
     // Store data in AsyncStorage
     await AsyncStorage.setItem('activity', activity);
