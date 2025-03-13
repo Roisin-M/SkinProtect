@@ -81,8 +81,8 @@ export default function SunExposureScreen() {
     // Store data in AsyncStorage
     await AsyncStorage.setItem('activity', activity);
     await AsyncStorage.setItem('exposure', exposure);
-    await AsyncStorage.setItem('caseNumber', caseNumber.toString());
-    await AsyncStorage.setItem('exposureResult', message);
+    //await AsyncStorage.setItem('caseNumber', caseNumber.toString());
+    //await AsyncStorage.setItem('exposureResult', message);
 
     //go back to the previous screen
     router.push('/(tabs)');
