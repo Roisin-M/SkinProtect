@@ -3,7 +3,6 @@ import { View, TextInput, Button, FlatList, Text, TouchableOpacity, ScrollView, 
 import { searchCity, PlaceResult } from '../services/GooglePlacesService';
 import { Colors } from '@/constants/colors';
 
-const API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY
 
 type CitySearchProps = {
     onSelectCity: (item: PlaceResult) => void;
@@ -18,7 +17,7 @@ export default function CitySearch({ onSelectCity }:CitySearchProps) {
     if (!query.trim()) return;
     setLoading(true);
     try {
-      const data = await searchCity(API_KEY, query.trim());
+      const data = await searchCity(query.trim());
       setResults(data);
     } catch (error) {
       console.error('Search error:', error);

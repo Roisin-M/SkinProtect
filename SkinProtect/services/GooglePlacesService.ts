@@ -6,8 +6,9 @@ export interface PlaceResult {
     types?: string[];
   }
   
+  const API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY || ''
+
   export async function searchCity(
-    apiKey: string,
     query: string
   ): Promise<PlaceResult[]> {
     try {
@@ -27,7 +28,7 @@ export interface PlaceResult {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Goog-Api-Key': apiKey,
+          'X-Goog-Api-Key': API_KEY,
           'X-Goog-FieldMask': fieldMask,
         },
         body: JSON.stringify(requestBody),
