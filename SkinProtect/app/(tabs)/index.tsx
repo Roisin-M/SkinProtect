@@ -14,6 +14,7 @@ import { router } from 'expo-router';
 import ProfileHeader from '@/components/ProfileHeader';
 import { auth } from '@/firebaseConfig';
 import { fetchUserProfile } from '@/services/profileService';
+import { string } from 'zod';
 
 
 export default function Index() {
@@ -88,24 +89,34 @@ export default function Index() {
   }, []);
 
   //Load the user's skin type
-  const loadSkinType = async () => {
-    const user = auth.currentUser;
-    if (user) {
-      // If logged in => check Firestore
-      const profile = await fetchUserProfile();
-      if (profile && profile.skinType) {
-        setSkinType(profile.skinType);
-        return; // done
+  async function loadSkinType(): Promise<string | null> {
+    try {
+      const user = auth.currentUser;
+
+      // If user is logged in => check Firestore
+      if (user) {
+        const profile = await fetchUserProfile();
+        if (profile && profile.skinType) {
+          console.log('Skin type fetched from Firestore:', profile.skinType);
+          return profile.skinType;
+        }
       }
+
+      // logged out? retrieve skin type from AsyncStorage
+      console.log('Fetching skin type from AsyncStorage...');
+      const storedSkinType = await AsyncStorage.getItem('skinType');
+      if (storedSkinType) {
+        console.log('Skin type from AsyncStorage:', storedSkinType);
+        return storedSkinType;
+      }
+    } catch (error) {
+      console.error('Error loading skin type:', error);
     }
-    // If logged out OR no skinType in doc fallback to AsyncStorage
-    const storedSkinType = await AsyncStorage.getItem('skinType');
-    if (storedSkinType) {
-      setSkinType(storedSkinType);
-    } else {
-      setSkinType(null);
-    }
-  };
+
+    // If none found, return null
+    return null;
+  }
+
 
   const fetchSPFData = async () => {
       //Get UV + Skin Type from AsyncStorage
@@ -117,6 +128,8 @@ export default function Index() {
       // If missing, default to 'N/A'
       if (!skinType || !storedLat || !storedLon) {
           setRecommendedSPF('N/A');
+          console.log('in fetchspfdata() : if missing? recommendedspf is set to N/A');
+          console.log('skintype: '+ skinType);
       } 
       else{
         //check if it is day time
@@ -127,6 +140,7 @@ export default function Index() {
             const uvDailyData = await getDailyUvi(lat, lon);
             // Calculate the SPF
             const spf = await calculateSPF(uvDailyData, skinType);
+            console.log('skintype: '+ skinType);
             setRecommendedSPF(spf);
   
             // Save the calculated SPF to AsyncStorage
@@ -142,6 +156,21 @@ export default function Index() {
       }
     };
 
+    //wait on skin type update before fetching spf
+    useEffect(() => {
+      if (!skinType) {
+        // no skin type => recommended = N/A
+        setRecommendedSPF('N/A');
+        return;
+      }
+      // otherwise fetch the lat/lon, uv, etc
+      (async () => {
+        console.log("Now that we have skinType:", skinType);
+        await fetchSPFData(); // uses the latest `skinType`
+      })();
+    }, [skinType]);
+    
+
   // Re-run every time this screen is focused
   useFocusEffect(
     React.useCallback(() => {
@@ -150,9 +179,12 @@ export default function Index() {
         setIsLoading(true);
         try{
           //load user or guest skin type
-          await loadSkinType();
+          const foundSkinType = await loadSkinType();
           if(isActive){
-            await fetchSPFData();
+            //await fetchSPFData();
+            setSkinType(foundSkinType);
+            console.log('new skin type '+ skinType);
+            //console.log(recommendedSPF);
           }
         } catch(error){
           console.error('Error in HomeScreen fetching SPF:', error);
@@ -206,6 +238,7 @@ export default function Index() {
           setRecommendedSPF(JSON.parse(calculatedSPF));
         } else {
           // If no calculated SPF is found, reset to a default 
+          console.log('in resetSPF() : recommendedspf is set to N/A')
           setRecommendedSPF('N/A');
         }
         setIsSPFChangedManually(false); //reset the manual change state
