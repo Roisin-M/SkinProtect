@@ -24,7 +24,7 @@ import { string } from 'zod';
 
 
 export default function Index() {
-  const [skinType, setSkinType] = useState<string|null>(null);
+  //const [skinType, setSkinType] = useState<string|null>(null);
   const [recommendedSPF, setRecommendedSPF] = useState<string | number>('...');
   const [isLoading, setIsLoading] = useState(true);
   const { top: safeTop } = useSafeAreaInsets();
@@ -132,8 +132,17 @@ export default function Index() {
       //Get UV + Skin Type from AsyncStorage
       const storedLat = await AsyncStorage.getItem('latitude');
       const storedLon = await AsyncStorage.getItem('longitude');
-      const storedUvIndex = await AsyncStorage.getItem('uvIndex')
+      const storedUvIndex = await AsyncStorage.getItem('uvIndex');
+      
+      //fetch skin type, activities and exposure data
+      const reapActivity = await AsyncStorage.getItem('activity');
+      const reapExposure = await AsyncStorage.getItem('exposure');
+      const skinType = await AsyncStorage.getItem('skinType');
+
       if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
+      if(reapActivity) setReapplicationActivity(reapActivity);
+      if (reapExposure) setReapplicationExposure(reapExposure);
+      if (skinType) setSkinType(skinType);
 
       // If missing, default to 'N/A'
       if (!skinType || !storedLat || !storedLon) {
@@ -182,83 +191,84 @@ export default function Index() {
     
 
   // Re-run every time this screen is focused
-  useFocusEffect(
-    React.useCallback(() => {
-      let isActive = true;
-      const fetchEverything = async ()=>{
-        setIsLoading(true);
-        try {
-          //Get UV + Skin Type + Activities from AsyncStorage
-          const skinTypeStr = await AsyncStorage.getItem('skinType'); 
-          const storedLat = await AsyncStorage.getItem('latitude');
-          const storedLon = await AsyncStorage.getItem('longitude');
-          const storedUvIndex = await AsyncStorage.getItem('uvIndex');
-          const reapActivity = await AsyncStorage.getItem('activity');
-          const reapExposure = await AsyncStorage.getItem('exposure');
-          const skinType = await AsyncStorage.getItem('skinType');
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     let isActive = true;
+  //     const fetchEverything = async ()=>{
+  //       setIsLoading(true);
+  //       try {
+  //         //Get UV + Skin Type + Activities from AsyncStorage
+  //         const skinTypeStr = await AsyncStorage.getItem('skinType'); 
+  //         const storedLat = await AsyncStorage.getItem('latitude');
+  //         const storedLon = await AsyncStorage.getItem('longitude');
+  //         const storedUvIndex = await AsyncStorage.getItem('uvIndex');
+          
+  //         const reapActivity = await AsyncStorage.getItem('activity');
+  //         const reapExposure = await AsyncStorage.getItem('exposure');
+  //         const skinType = await AsyncStorage.getItem('skinType');
 
-          if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
-          if(reapActivity) setReapplicationActivity(reapActivity);
-          if (reapExposure) setReapplicationExposure(reapExposure);
-          if (skinType) setSkinType(skinType);
+  //         if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
+  //         if(reapActivity) setReapplicationActivity(reapActivity);
+  //         if (reapExposure) setReapplicationExposure(reapExposure);
+  //         if (skinType) setSkinType(skinType);
 
-          // If missing, default to 'N/A'
-          if (!skinTypeStr || !storedLat || !storedLon) {
-            if (isActive) {
-              setRecommendedSPF('N/A');
-            }
-          } else {
-            //check if it is day time
-            if (dayTime == true) {
-              //const uvNumber = parseFloat(uvIndex);
-              const lat = parseFloat(storedLat);
-              const lon = parseFloat(storedLon);
-              const uvDailyData = await getDailyUvi(lat, lon);
+  //         // If missing, default to 'N/A'
+  //         if (!skinTypeStr || !storedLat || !storedLon) {
+  //           if (isActive) {
+  //             setRecommendedSPF('N/A');
+  //           }
+  //         } else {
+  //           //check if it is day time
+  //           if (dayTime == true) {
+  //             //const uvNumber = parseFloat(uvIndex);
+  //             const lat = parseFloat(storedLat);
+  //             const lon = parseFloat(storedLon);
+  //             const uvDailyData = await getDailyUvi(lat, lon);
 
-              // Calculate the SPF
-              const spf = await calculateSPF(uvDailyData, skinTypeStr);
-              if (isActive) {
-                setRecommendedSPF(spf);
-                // Save the calculated SPF to AsyncStorage
-                try {
-                  await AsyncStorage.setItem('calculatedSPF', JSON.stringify(spf));
-                } catch (error) {
-                  console.error('Error saving SPF to AsyncStorage:', error);
-                }
-              }
-            } else {
-              setRecommendedSPF('Not Needed');
-            }
+  //             // Calculate the SPF
+  //             const spf = await calculateSPF(uvDailyData, skinTypeStr);
+  //             if (isActive) {
+  //               setRecommendedSPF(spf);
+  //               // Save the calculated SPF to AsyncStorage
+  //               try {
+  //                 await AsyncStorage.setItem('calculatedSPF', JSON.stringify(spf));
+  //               } catch (error) {
+  //                 console.error('Error saving SPF to AsyncStorage:', error);
+  //               }
+  //             }
+  //           } else {
+  //             setRecommendedSPF('Not Needed');
+  //           }
             
-          }
-        } catch (error) {
-          console.error('Error in HomeScreen fetching data from storage:', error);
-        } finally {
-          if (isActive) {
-        try{
-          //load user or guest skin type
-          const foundSkinType = await loadSkinType();
-          if(isActive){
-            //await fetchSPFData();
-            setSkinType(foundSkinType);
-            console.log('new skin type '+ skinType);
-            //console.log(recommendedSPF);
-          }
-        } catch(error){
-          console.error('Error in HomeScreen fetching SPF:', error);
-        } finally{
-          if(isActive){
-            setIsLoading(false);
-          }
-        }
-      };
-      fetchEverything();
-      // if user leaves screen before fetch finishes
-      return () => {
-        isActive = false;
-      };
-    }, [dayTime])
-  );
+  //         }
+  //       } catch (error) {
+  //         console.error('Error in HomeScreen fetching data from storage:', error);
+  //       } finally {
+  //         if (isActive) {
+  //       try{
+  //         //load user or guest skin type
+  //         const foundSkinType = await loadSkinType();
+  //         if(isActive){
+  //           //await fetchSPFData();
+  //           setSkinType(foundSkinType);
+  //           console.log('new skin type '+ skinType);
+  //           //console.log(recommendedSPF);
+  //         }
+  //       } catch(error){
+  //         console.error('Error in HomeScreen fetching SPF:', error);
+  //       } finally{
+  //         if(isActive){
+  //           setIsLoading(false);
+  //         }
+  //       }
+  //     };
+  //     fetchEverything();
+  //     // if user leaves screen before fetch finishes
+  //     return () => {
+  //       isActive = false;
+  //     };
+  //   }, [dayTime])
+  // );
 
   // data for changing spf value
   const spfOptions: spfType[] = [
@@ -540,11 +550,11 @@ export default function Index() {
               {/* <ProgressBar duration={reapplicationTime} /> */}
               <Text style={styles.countdown}>Reapply sunscreen in: {formatTime(reapplicationTime)}</Text>
               {/* Add a button to change reapplication time to 5 sec for testing */}
-              {/* <Pressable onPress={() => setReapplicationTime(5)}>
+              <Pressable onPress={() => setReapplicationTime(5)}>
                 <Text style={styles.debugButton}>Trigger Timer End</Text>
-              </Pressable> */}
+              </Pressable>
+              {/* <ActivityIndicator size="small" color={Colors.highLightYeelow} /> */}
             </View>
-            <ActivityIndicator size="small" color={Colors.highLightYeelow} />
           ) : reapplicationTime !== null ? (
             <Text style={styles.countdown}>Next in: {formatTime(reapplicationTime)}</Text>
           ) : (
