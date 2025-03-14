@@ -30,7 +30,7 @@ export default function Index() {
   const { top: safeTop } = useSafeAreaInsets();
   const [uvIndex, setUvIndex] = useState<number | null>(null);
   const [isSPFChangedManually, setIsSPFChangedManually] = useState(false);
-  const [skinType, setSkinType] = useState('');
+  const [skinType, setSkinType] = useState<string|null>(null);
   //spf dropdown
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
@@ -137,12 +137,12 @@ export default function Index() {
       //fetch skin type, activities and exposure data
       const reapActivity = await AsyncStorage.getItem('activity');
       const reapExposure = await AsyncStorage.getItem('exposure');
-      const skinType = await AsyncStorage.getItem('skinType');
+      //const skinType = await AsyncStorage.getItem('skinType');
 
       if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
       if(reapActivity) setReapplicationActivity(reapActivity);
       if (reapExposure) setReapplicationExposure(reapExposure);
-      if (skinType) setSkinType(skinType);
+      //if (skinType) setSkinType(skinType);
 
       // If missing, default to 'N/A'
       if (!skinType || !storedLat || !storedLon) {
@@ -190,6 +190,36 @@ export default function Index() {
     }, [skinType]);
     
 
+     // Re-run every time this screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      let isActive = true;
+      const fetchEverything = async ()=>{
+        setIsLoading(true);
+        try{
+          //load user or guest skin type
+          const foundSkinType = await loadSkinType();
+          if(isActive){
+            //await fetchSPFData();
+            setSkinType(foundSkinType);
+            console.log('new skin type '+ skinType);
+            //console.log(recommendedSPF);
+          }
+        } catch(error){
+          console.error('Error in HomeScreen fetching SPF:', error);
+        } finally{
+          if(isActive){
+            setIsLoading(false);
+          }
+        }
+      };
+      fetchEverything();
+      // if user leaves screen before fetch finishes
+      return () => {
+        isActive = false;
+      };
+    }, [dayTime])
+  );
   // Re-run every time this screen is focused
   // useFocusEffect(
   //   React.useCallback(() => {
