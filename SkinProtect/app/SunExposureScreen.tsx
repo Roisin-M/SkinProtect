@@ -13,8 +13,8 @@ import ProfileHeader from '@/components/ProfileHeader';
 export default function SunExposureScreen() {
   const [activity, setActivity] = useState('');
   const [exposure, setExposure] = useState('');
-  const [result, setResult] = useState('N/A');
-  const [caseNumber, setCaseNumber] = useState(0);
+  //const [result, setResult] = useState('N/A');
+  //const [caseNumber, setCaseNumber] = useState(0);
   const router = useRouter();
   const navigation = useNavigation();
 
@@ -76,14 +76,14 @@ export default function SunExposureScreen() {
       message = 'Reapply SPF every 2 hours.';
     }
 
-    setCaseNumber(caseNumber);
-    setResult(message);
+    //setCaseNumber(caseNumber);
+    //setResult(message);
 
     // Store data in AsyncStorage
     await AsyncStorage.setItem('activity', activity);
     await AsyncStorage.setItem('exposure', exposure);
-    await AsyncStorage.setItem('caseNumber', caseNumber.toString());
-    await AsyncStorage.setItem('exposureResult', message);
+    //await AsyncStorage.setItem('caseNumber', caseNumber.toString());
+    //await AsyncStorage.setItem('exposureResult', message);
 
     //go back to the previous screen
     router.push('/(tabs)');

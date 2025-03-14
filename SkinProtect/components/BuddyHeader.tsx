@@ -32,7 +32,7 @@ const BuddyHeader = forwardRef<BuddyHeaderRef>((props, ref) => {
       } else {
         //if (!hasShownWelcomeBack) {
           // Not the first launch, but welcome back message hasn't been shown
-          setMessage("Welcome back! Remember to reapply sunscreen.");
+          setMessage("Welcome back! Remember to apply sunscreen today.");
           setShowPopup(true);
           setTimeout(() => setShowPopup(false), 4000);
       //}

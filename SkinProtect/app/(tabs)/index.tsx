@@ -12,6 +12,12 @@ import { Colors } from '@/constants/colors';
 import { router } from 'expo-router';
 //authentication
 import ProfileHeader from '@/components/ProfileHeader';
+//reapplication
+import getReapplicationRecommendation from '../utils/getReapplicationRecommendation';
+//countdown
+import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
+import * as Progress from 'react-native-progress';
+import ProgressBar from '@/components/ProgressBar';
 import { auth } from '@/firebaseConfig';
 import { fetchUserProfile } from '@/services/profileService';
 import { string } from 'zod';
@@ -24,7 +30,7 @@ export default function Index() {
   const { top: safeTop } = useSafeAreaInsets();
   const [uvIndex, setUvIndex] = useState<number | null>(null);
   const [isSPFChangedManually, setIsSPFChangedManually] = useState(false);
-  
+  const [skinType, setSkinType] = useState('');
   //spf dropdown
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
@@ -38,8 +44,10 @@ export default function Index() {
   const [activity, setActivity] = useState("outdoor_direct");
 
   //reapplication states
-  const [reapplicationTime, setReapplicationTime] = useState<number | null>(null); // Countdown in seconds
-  const [message, setMessage] = useState('N/A');
+  const [reapplicationTime, setReapplicationTime] = useState<number | null>(null); // Countdown will be in seconds
+  const [message, setMessage] = useState('Not Available');
+  const [reapplicationActivity, setReapplicationActivity] = useState('');
+  const [reapplicationExposure, setReapplicationExposure] = useState('');
 
   //ref for buddy header
   const buddyHeaderRef = useRef<BuddyHeaderRef>(null);
@@ -48,7 +56,9 @@ export default function Index() {
   const infoMessages = {
     spf: "SPF (Sun Protection Factor) indicates how well sunscreen protects against UVB rays. Higher SPF provides stronger protection.",
     uvIndex: "UV Index measures the level of ultraviolet radiation from the sun. Higher values mean stronger UV exposure and greater risk of skin damage.",
-    reapplication: "Reapplying sunscreen is crucial for maintaining effective protection against UV radiation. The frequency of reapplication depends on your activity and the UV index. If you are outdoors in direct sunlight for extended periods, sunscreen should be reapplied regularly to maintain its effectiveness. In contrast, if you spend most of your time indoors, a single morning application may be sufficient. Always reapply every 2 hours if sweating, swimming, or exposed to strong UV rays.",
+    reapplication: "Reapplying sunscreen is crucial for maintaining effective protection against UV radiation. The frequency of reapplication depends on your activity and the UV index. If you are outdoors in direct sunlight for extended periods, sunscreen should be reapplied regularly to maintain its effectiveness. In contrast, if you spend most of your time indoors, a single morning application may be sufficient. Always reapply every 2 hours if sweating, swimming, or exposed to strong UV rays. But keep in mind this is only a recommendation and you should still consider all factors when deciding if you need to reapply more frequently!",
+    spfChange: "If you don’t have the recommended SPF, you can select the one you have, and I’ll adjust the reapplication for you! But keep in mind the UV index—if it’s high, using low SPF factors won’t be effective at all!",
+    spfBackToRecommended: "Want to check the recommended SPF instead of the one you selected? This button is here for you!",
   };
 
   //show buddy messages
@@ -177,6 +187,54 @@ export default function Index() {
       let isActive = true;
       const fetchEverything = async ()=>{
         setIsLoading(true);
+        try {
+          //Get UV + Skin Type + Activities from AsyncStorage
+          const skinTypeStr = await AsyncStorage.getItem('skinType'); 
+          const storedLat = await AsyncStorage.getItem('latitude');
+          const storedLon = await AsyncStorage.getItem('longitude');
+          const storedUvIndex = await AsyncStorage.getItem('uvIndex');
+          const reapActivity = await AsyncStorage.getItem('activity');
+          const reapExposure = await AsyncStorage.getItem('exposure');
+          const skinType = await AsyncStorage.getItem('skinType');
+
+          if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
+          if(reapActivity) setReapplicationActivity(reapActivity);
+          if (reapExposure) setReapplicationExposure(reapExposure);
+          if (skinType) setSkinType(skinType);
+
+          // If missing, default to 'N/A'
+          if (!skinTypeStr || !storedLat || !storedLon) {
+            if (isActive) {
+              setRecommendedSPF('N/A');
+            }
+          } else {
+            //check if it is day time
+            if (dayTime == true) {
+              //const uvNumber = parseFloat(uvIndex);
+              const lat = parseFloat(storedLat);
+              const lon = parseFloat(storedLon);
+              const uvDailyData = await getDailyUvi(lat, lon);
+
+              // Calculate the SPF
+              const spf = await calculateSPF(uvDailyData, skinTypeStr);
+              if (isActive) {
+                setRecommendedSPF(spf);
+                // Save the calculated SPF to AsyncStorage
+                try {
+                  await AsyncStorage.setItem('calculatedSPF', JSON.stringify(spf));
+                } catch (error) {
+                  console.error('Error saving SPF to AsyncStorage:', error);
+                }
+              }
+            } else {
+              setRecommendedSPF('Not Needed');
+            }
+            
+          }
+        } catch (error) {
+          console.error('Error in HomeScreen fetching data from storage:', error);
+        } finally {
+          if (isActive) {
         try{
           //load user or guest skin type
           const foundSkinType = await loadSkinType();
@@ -252,22 +310,34 @@ export default function Index() {
       }
   };
 
-  // decide reapplication logic
+  // get reapplication recommendation
+  const reapRecommendation = getReapplicationRecommendation(skinType, uvIndex, recommendedSPF, reapplicationActivity, reapplicationExposure);
+  //method to set corresponding message and reapplication time based on the result
   useEffect(() => {
-    if (activity === "outdoor_direct" && uvIndex && uvIndex > 6) {
-      setReapplicationTime(7200);
-      setMessage('');
-    } else {
-      setReapplicationTime(null);
-      setMessage("N/A");
-    }
-  
-  }, [activity, uvIndex]); // <-- Move this outside of handleLocationUpdate
-  
+    if (reapRecommendation === null) return;
 
+    if (reapRecommendation === 1) {
+      setReapplicationTime(0); //no reapplication here needed
+      setMessage('No Need for SPF today');
+    } 
+    else if (reapRecommendation === 2) {
+      setReapplicationTime(0); //no reapplication here needed
+      setMessage('Apply only in the morning');
+    }
+    else if (reapRecommendation === 3){
+      setReapplicationTime(14400); //4 hours in seconds
+      setMessage('Reapply every 4 hours');
+    }
+    else if (reapRecommendation === 4){
+      setReapplicationTime(7200); //2 hours in seconds
+      setMessage('Reapply every 2 hours');
+    }
+  }, [reapRecommendation]);
+  
   //countdown timer logic
   useEffect(() => {
     if (reapplicationTime === null) return;
+    
 
     const interval = setInterval(() => {
       setReapplicationTime((prev) => {
@@ -275,6 +345,17 @@ export default function Index() {
           return prev -1;
         }else{
           clearInterval(interval);
+          alert("Time to reapply SPF!")
+
+          //reset the countdown
+          setTimeout(() => {
+            if (reapRecommendation === 3) {
+              setReapplicationTime(14400); //4hrs
+            } else if (reapRecommendation === 4) {
+              setReapplicationTime(7200); // 2 hours
+            }
+          }, 1000); //1s delay before reset
+
           return null;
         }
       });
@@ -283,6 +364,22 @@ export default function Index() {
     return () => clearInterval(interval);
   }, [reapplicationTime]);
 
+  // useEffect(() => {
+  //         const timer = setInterval(() => {
+  //             setElapsedTime((prev) => {
+  //                 if (prev < duration) {
+  //                     return prev + 1;
+  //                 } else {
+  //                     clearInterval(timer);
+  //                     alert("Time to reapply SPF!");
+  //                     return prev;
+  //                 }
+  //             });
+  //         }, 1000); //update every second
+  
+  //         return () => clearInterval(timer); //cleanup on unmount
+  //     }, [duration]);
+
   // Convert seconds to HH:MM:SS
   const formatTime = (seconds: number) => {
     const hrs = Math.floor(seconds / 3600);
@@ -290,6 +387,13 @@ export default function Index() {
     const secs = seconds % 60;
     return `${hrs}:${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
+
+  //colors for countdown
+  const countdownColors = [
+    ['#004777', 0.33],  // Assuming this is how colors are defined
+    ['#F7B801', 0.33],
+    ['#A30000', 1]      // Assuming you want it with full opacity
+  ];
 
   return (
     <View style={[styles.container, { paddingTop: safeTop }]}>
@@ -319,21 +423,36 @@ export default function Index() {
           </Pressable>
         ) : (
           <View>
-            <Text style={styles.heading1}>SPF {recommendedSPF}</Text>
+            <Text style={styles.heading1}>
+              SPF {recommendedSPF}
+              <TouchableOpacity onPress={() => showBuddyMessage("spf")}>
+                <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+              </TouchableOpacity>
+            </Text>
 
             {isSPFChangedManually ? (
               <Pressable 
                 style={styles.btnChange} 
                 onPress={resetSPF}
               >
-                <Text style={styles.btnChangelabel}>Get Recommended SPF</Text>
+                <Text style={styles.btnChangelabel}>
+                  Get Recommended SPF
+                  <TouchableOpacity onPress={() => showBuddyMessage("spfBackToRecommended")}>
+                    <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+                  </TouchableOpacity>
+                </Text>
               </Pressable>
             ) : (
               <TouchableOpacity 
                 style={styles.btnChange} 
                 onPress={() => setIsDropdownOpen(!isDropdownOpen)}
               > 
-                <Text style={styles.btnChangelabel}>Change SPF</Text>
+                <Text style={styles.btnChangelabel}>
+                  Change SPF
+                  <TouchableOpacity onPress={() => showBuddyMessage("spfChange")}>
+                    <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+                  </TouchableOpacity>
+                </Text>
               </TouchableOpacity>
             )}
           </View>
@@ -395,18 +514,41 @@ export default function Index() {
         {/* Reapplication */}
         <View style={styles.ReapplicationContainer}>
           <Text style={styles.label}>
-            Reapplication: 
+            Reapplication
             <TouchableOpacity onPress={() => showBuddyMessage("reapplication")}>
               <Ionicons name="help-circle" color={Colors.highLightYeelow} size={24} style={styles.icon} />
             </TouchableOpacity>
           </Text>
           
           {isLoading ? (
+            <ActivityIndicator size="small" color="yellow" />
+          ) : reapplicationTime !== null && reapplicationTime > 0 ? (
+            // <CountdownCircleTimer
+            //   isPlaying
+            //   duration={reapplicationTime}
+            //   size={80} 
+            //   colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
+            //   colorsTime={[10, 6, 3, 0]}
+            //   onComplete={() => ({ shouldRepeat: true, delay: 2 })}
+            // >
+            //   {({ remainingTime }) => (
+            //     <Text style={styles.countdown}>{formatTime(remainingTime)}</Text>
+            //   )}
+            // </CountdownCircleTimer>
+            <View>
+              {/* <Progress.Bar progress={reapplicationTime} width={200} color={Colors.paletteDarkerYellow}/> */}
+              {/* <ProgressBar duration={reapplicationTime} /> */}
+              <Text style={styles.countdown}>Reapply sunscreen in: {formatTime(reapplicationTime)}</Text>
+              {/* Add a button to change reapplication time to 5 sec for testing */}
+              {/* <Pressable onPress={() => setReapplicationTime(5)}>
+                <Text style={styles.debugButton}>Trigger Timer End</Text>
+              </Pressable> */}
+            </View>
             <ActivityIndicator size="small" color={Colors.highLightYeelow} />
           ) : reapplicationTime !== null ? (
             <Text style={styles.countdown}>Next in: {formatTime(reapplicationTime)}</Text>
           ) : (
-            <Text style={styles.value}>No reapplication needed yet</Text>
+            <Text style={styles.value}>{message}</Text>
           )}
         </View>
 
@@ -580,4 +722,12 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: 16,
   },
+  debugButton: {
+    color: Colors.paletteLighterYellow,
+    fontWeight: "bold",
+    marginLeft: 5,
+    textDecorationLine: "underline",
+    textAlign: 'center',
+    marginTop: 10,
+  }
 });
