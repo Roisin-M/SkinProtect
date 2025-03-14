@@ -239,6 +239,7 @@ export default function Index() {
   //countdown timer logic
   useEffect(() => {
     if (reapplicationTime === null) return;
+    
 
     const interval = setInterval(() => {
       setReapplicationTime((prev) => {
@@ -246,6 +247,17 @@ export default function Index() {
           return prev -1;
         }else{
           clearInterval(interval);
+          alert("Time to reapply SPF!")
+
+          //reset the countdown
+          setTimeout(() => {
+            if (reapRecommendation === 3) {
+              setReapplicationTime(14400); //4hrs
+            } else if (reapRecommendation === 4) {
+              setReapplicationTime(7200); // 2 hours
+            }
+          }, 1000); //1s delay before reset
+
           return null;
         }
       });
@@ -253,6 +265,22 @@ export default function Index() {
 
     return () => clearInterval(interval);
   }, [reapplicationTime]);
+
+  // useEffect(() => {
+  //         const timer = setInterval(() => {
+  //             setElapsedTime((prev) => {
+  //                 if (prev < duration) {
+  //                     return prev + 1;
+  //                 } else {
+  //                     clearInterval(timer);
+  //                     alert("Time to reapply SPF!");
+  //                     return prev;
+  //                 }
+  //             });
+  //         }, 1000); //update every second
+  
+  //         return () => clearInterval(timer); //cleanup on unmount
+  //     }, [duration]);
 
   // Convert seconds to HH:MM:SS
   const formatTime = (seconds: number) => {
@@ -411,8 +439,12 @@ export default function Index() {
             // </CountdownCircleTimer>
             <View>
               {/* <Progress.Bar progress={reapplicationTime} width={200} color={Colors.paletteDarkerYellow}/> */}
-              <ProgressBar duration={reapplicationTime} />
+              {/* <ProgressBar duration={reapplicationTime} /> */}
               <Text style={styles.countdown}>Reapply sunscreen in: {formatTime(reapplicationTime)}</Text>
+              {/* Add a button to change reapplication time to 5 sec for testing */}
+              {/* <Pressable onPress={() => setReapplicationTime(5)}>
+                <Text style={styles.debugButton}>Trigger Timer End</Text>
+              </Pressable> */}
             </View>
           ) : (
             <Text style={styles.value}>{message}</Text>
@@ -588,4 +620,12 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: 16,
   },
+  debugButton: {
+    color: Colors.paletteLighterYellow,
+    fontWeight: "bold",
+    marginLeft: 5,
+    textDecorationLine: "underline",
+    textAlign: 'center',
+    marginTop: 10,
+  }
 });
