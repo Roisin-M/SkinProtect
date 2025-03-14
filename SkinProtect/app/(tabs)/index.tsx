@@ -31,6 +31,10 @@ export default function Index() {
   const [uvIndex, setUvIndex] = useState<number | null>(null);
   const [isSPFChangedManually, setIsSPFChangedManually] = useState(false);
   const [skinType, setSkinType] = useState<string|null>(null);
+  // states for location
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+
   //spf dropdown
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
@@ -126,8 +130,26 @@ export default function Index() {
     // If none found, return null
     return null;
   }
-
-
+  //load location
+  async function loadLocation(): Promise<{ latitude: number; longitude: number } | null> {
+    try {
+      console.log('Fetching location from AsyncStorage...');
+      const storedLatitude = await AsyncStorage.getItem('latitude');
+      const storedLongitude = await AsyncStorage.getItem('longitude');
+  
+      if (storedLatitude && storedLongitude) {
+        console.log('Location fetched from AsyncStorage:', storedLatitude, storedLongitude);
+        return {
+          latitude: parseFloat(storedLatitude),
+          longitude: parseFloat(storedLongitude),
+        };
+      }
+    } catch (error) {
+      console.error('Error loading location:', error);
+    }
+    return null;
+  }
+  
   const fetchSPFData = async () => {
       //Get UV + Skin Type from AsyncStorage
       const storedLat = await AsyncStorage.getItem('latitude');
@@ -177,7 +199,7 @@ export default function Index() {
 
     //wait on skin type update before fetching spf
     useEffect(() => {
-      if (!skinType) {
+      if (!skinType ||!latitude ||!longitude ) {
         // no skin type => recommended = N/A
         setRecommendedSPF('N/A');
         return;
@@ -185,9 +207,10 @@ export default function Index() {
       // otherwise fetch the lat/lon, uv, etc
       (async () => {
         console.log("Now that we have skinType:", skinType);
-        await fetchSPFData(); // uses the latest `skinType`
+        console.log("Now that we have lat and lon:", latitude, longitude);
+        await fetchSPFData(); // uses the latest `skinType` and location
       })();
-    }, [skinType]);
+    }, [skinType, latitude, longitude]);
     
 
      // Re-run every time this screen is focused
@@ -199,10 +222,16 @@ export default function Index() {
         try{
           //load user or guest skin type
           const foundSkinType = await loadSkinType();
+          const foundLocation = await loadLocation();
           if(isActive){
             //await fetchSPFData();
             setSkinType(foundSkinType);
             console.log('new skin type '+ skinType);
+            if(foundLocation){
+              setLatitude(foundLocation.latitude);
+              setLongitude(foundLocation.longitude);
+            }
+            console.log('new lat and lon',latitude,longitude);
             //console.log(recommendedSPF);
           }
         } catch(error){
