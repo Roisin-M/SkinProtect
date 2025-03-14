@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, FlatList, Text, TouchableOpacity, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { View, TextInput, Button, Text, TouchableOpacity, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { searchCity, PlaceResult } from '../services/GooglePlacesService';
 import { Colors } from '@/constants/colors';
 

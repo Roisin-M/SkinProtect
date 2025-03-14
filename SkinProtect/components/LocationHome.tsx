@@ -6,11 +6,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import CitySearch from './CitySearch'
 import { PlaceResult } from '@/services/GooglePlacesService'
 
-type LocationType = {
-  name: string;
-  latitude: number;
-  longitude: number;
-};
+// type LocationType = {
+//   name: string;
+//   latitude: number;
+//   longitude: number;
+// };
 
 type Props = {
     onLocationUpdate: (latitude: number, longitude: number) => void; // Callback to update latitude and longitude
