@@ -1,7 +1,7 @@
-const OPENWEATHER_API_KEY = process.env.EXPO_PUBLIC_API_KEY
+const UV_ENDPOINT_BASE_URL = 'https://pvkjqihey0.execute-api.eu-west-1.amazonaws.com/dev'
 
 export const getCurrentUvi = async (latitude: number, longitude: number) => {
-  const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}`;
+  const url = `${UV_ENDPOINT_BASE_URL}/currentuv?lat=${latitude}&lon=${longitude}`;
 
   try {
     const response = await fetch(url);
@@ -12,7 +12,7 @@ export const getCurrentUvi = async (latitude: number, longitude: number) => {
     const data = await response.json();
     console.log('There is a uv response');
     //extract the UV index from the current object
-    const uvIndex = data.current.uvi;
+    const uvIndex = data.uvIndex;
     console.log(`data of uv index is returned from service getUVIndex : ${data}`);
     //alert(`${uvIndex}`);
     return uvIndex; // Returns the UV index data when called
@@ -23,7 +23,7 @@ export const getCurrentUvi = async (latitude: number, longitude: number) => {
 };
 
 export const getDailyUvi = async (latitude:number, longitude:number) =>{
-  const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}`;
+  const url = `${UV_ENDPOINT_BASE_URL}/dailyuv?lat=${latitude}&lon=${longitude}`;
 
   try{
     const response = await fetch(url);
@@ -34,7 +34,7 @@ export const getDailyUvi = async (latitude:number, longitude:number) =>{
     const data = await response.json();
     console.log('There is an response')
     //fetch daily uvi from array of 8 day forecast
-    const uvIndex = data.daily[0].uvi;
+    const uvIndex = data.uvIndex;
     console.log(`data of uv index is returned from service getUVIndex: ${uvIndex}`);
     return uvIndex;
   }catch(error){
