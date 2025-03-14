@@ -51,6 +51,7 @@ export const Colors = {
   seenThroughBg: 'rgba(211, 211, 211, 0.2)',
   textLight: '#fff',
   textDark: 'black',
+  highLightYeelow: '#ffef00',
 
     // UV-specific colors based on risk level
     uvLow: '#4CAF50', // Green (Low risk)

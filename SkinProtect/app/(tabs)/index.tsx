@@ -18,9 +18,13 @@ import getReapplicationRecommendation from '../utils/getReapplicationRecommendat
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import * as Progress from 'react-native-progress';
 import ProgressBar from '@/components/ProgressBar';
+import { auth } from '@/firebaseConfig';
+import { fetchUserProfile } from '@/services/profileService';
+import { string } from 'zod';
 
 
 export default function Index() {
+  const [skinType, setSkinType] = useState<string|null>(null);
   const [recommendedSPF, setRecommendedSPF] = useState<string | number>('...');
   const [isLoading, setIsLoading] = useState(true);
   const { top: safeTop } = useSafeAreaInsets();
@@ -94,13 +98,94 @@ export default function Index() {
     }
   }, []);
 
+  //Load the user's skin type
+  async function loadSkinType(): Promise<string | null> {
+    try {
+      const user = auth.currentUser;
+
+      // If user is logged in => check Firestore
+      if (user) {
+        const profile = await fetchUserProfile();
+        if (profile && profile.skinType) {
+          console.log('Skin type fetched from Firestore:', profile.skinType);
+          return profile.skinType;
+        }
+      }
+
+      // logged out? retrieve skin type from AsyncStorage
+      console.log('Fetching skin type from AsyncStorage...');
+      const storedSkinType = await AsyncStorage.getItem('skinType');
+      if (storedSkinType) {
+        console.log('Skin type from AsyncStorage:', storedSkinType);
+        return storedSkinType;
+      }
+    } catch (error) {
+      console.error('Error loading skin type:', error);
+    }
+
+    // If none found, return null
+    return null;
+  }
+
+
+  const fetchSPFData = async () => {
+      //Get UV + Skin Type from AsyncStorage
+      const storedLat = await AsyncStorage.getItem('latitude');
+      const storedLon = await AsyncStorage.getItem('longitude');
+      const storedUvIndex = await AsyncStorage.getItem('uvIndex')
+      if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
+
+      // If missing, default to 'N/A'
+      if (!skinType || !storedLat || !storedLon) {
+          setRecommendedSPF('N/A');
+          console.log('in fetchspfdata() : if missing? recommendedspf is set to N/A');
+          console.log('skintype: '+ skinType);
+      } 
+      else{
+        //check if it is day time
+       if (dayTime == true) {
+          //const uvNumber = parseFloat(uvIndex);
+            const lat = parseFloat(storedLat);
+            const lon = parseFloat(storedLon);
+            const uvDailyData = await getDailyUvi(lat, lon);
+            // Calculate the SPF
+            const spf = await calculateSPF(uvDailyData, skinType);
+            console.log('skintype: '+ skinType);
+            setRecommendedSPF(spf);
+  
+            // Save the calculated SPF to AsyncStorage
+            try {
+              await AsyncStorage.setItem('calculatedSPF', JSON.stringify(spf));
+            } catch (error) {
+              console.error('Error saving SPF to AsyncStorage:', error);
+            }
+          }
+          else{
+            setRecommendedSPF('Not Needed');
+          }
+      }
+    };
+
+    //wait on skin type update before fetching spf
+    useEffect(() => {
+      if (!skinType) {
+        // no skin type => recommended = N/A
+        setRecommendedSPF('N/A');
+        return;
+      }
+      // otherwise fetch the lat/lon, uv, etc
+      (async () => {
+        console.log("Now that we have skinType:", skinType);
+        await fetchSPFData(); // uses the latest `skinType`
+      })();
+    }, [skinType]);
+    
 
   // Re-run every time this screen is focused
   useFocusEffect(
     React.useCallback(() => {
       let isActive = true;
-
-      const fetchData = async () => {
+      const fetchEverything = async ()=>{
         setIsLoading(true);
         try {
           //Get UV + Skin Type + Activities from AsyncStorage
@@ -150,17 +235,29 @@ export default function Index() {
           console.error('Error in HomeScreen fetching data from storage:', error);
         } finally {
           if (isActive) {
+        try{
+          //load user or guest skin type
+          const foundSkinType = await loadSkinType();
+          if(isActive){
+            //await fetchSPFData();
+            setSkinType(foundSkinType);
+            console.log('new skin type '+ skinType);
+            //console.log(recommendedSPF);
+          }
+        } catch(error){
+          console.error('Error in HomeScreen fetching SPF:', error);
+        } finally{
+          if(isActive){
             setIsLoading(false);
           }
         }
       };
-      fetchData();
-
-      // Cleanup: if user leaves screen before fetch finishes
+      fetchEverything();
+      // if user leaves screen before fetch finishes
       return () => {
         isActive = false;
       };
-    }, [])
+    }, [dayTime])
   );
 
   // data for changing spf value
@@ -199,6 +296,7 @@ export default function Index() {
           setRecommendedSPF(JSON.parse(calculatedSPF));
         } else {
           // If no calculated SPF is found, reset to a default 
+          console.log('in resetSPF() : recommendedspf is set to N/A')
           setRecommendedSPF('N/A');
         }
         setIsSPFChangedManually(false); //reset the manual change state
@@ -313,7 +411,7 @@ export default function Index() {
         {/* SPF recommendation */}
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="yellow" />
+            <ActivityIndicator size="large" color={Colors.highLightYeelow} />
             <Text style={styles.loadingText}>Calculating SPF...</Text>
           </View>
         ) : recommendedSPF === 'N/A' ? (
@@ -409,7 +507,7 @@ export default function Index() {
             </>
           )}
           <TouchableOpacity onPress={() => showBuddyMessage("uvIndex")}>
-            <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+            <Ionicons name="help-circle" color={Colors.highLightYeelow} size={24} style={styles.icon} />
           </TouchableOpacity>
         </Text>
 
@@ -418,7 +516,7 @@ export default function Index() {
           <Text style={styles.label}>
             Reapplication
             <TouchableOpacity onPress={() => showBuddyMessage("reapplication")}>
-              <Ionicons name="help-circle" color="yellow" size={24} style={styles.icon} />
+              <Ionicons name="help-circle" color={Colors.highLightYeelow} size={24} style={styles.icon} />
             </TouchableOpacity>
           </Text>
           
@@ -446,6 +544,9 @@ export default function Index() {
                 <Text style={styles.debugButton}>Trigger Timer End</Text>
               </Pressable> */}
             </View>
+            <ActivityIndicator size="small" color={Colors.highLightYeelow} />
+          ) : reapplicationTime !== null ? (
+            <Text style={styles.countdown}>Next in: {formatTime(reapplicationTime)}</Text>
           ) : (
             <Text style={styles.value}>{message}</Text>
           )}
@@ -478,9 +579,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
+    marginTop: 40,
   },
   heading1: {
-    color: '#fff',
+    color: Colors.textLight,
     textAlign: 'center',
     fontSize: 45,
     fontWeight: 'bold',
@@ -488,7 +590,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   heading2: {
-    color: '#fff',
+    color: Colors.textLight,
     textAlign: 'center',
     fontSize: 20,
     marginBottom: 25,
@@ -510,7 +612,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   loadingText: {
-    color: "white",
+    color: Colors.textLight,
     fontSize: 18,
     marginLeft: 10,
   },
@@ -570,18 +672,18 @@ const styles = StyleSheet.create({
   countdown: {
     fontSize: 20, 
     fontWeight: 'bold', 
-    color: '#ffef00'
+    color: Colors.highLightYeelow,
   },
   label: {
     fontSize: 20,
-    color: '#fff',
+    color: Colors.textLight,
     marginBottom: 8,
     fontWeight: 'bold',
   },
   value: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffef00', 
+    color: Colors.highLightYeelow, 
   },
   modalOverlay: {
     flex: 1,

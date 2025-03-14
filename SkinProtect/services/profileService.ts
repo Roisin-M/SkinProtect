@@ -1,5 +1,5 @@
 import { auth, db } from '../firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 export async function fetchUserProfile() {
   const user = auth.currentUser;
@@ -11,5 +11,17 @@ export async function fetchUserProfile() {
   if (snapshot.exists()) {
     return snapshot.data(); // { firstName, lastName, ... }
   }
+  return null;
+}
+
+export async function updateUserSkinType(skinType: string){
+  const user = auth.currentUser;
+  if(!user){
+    return null; // not logged in
+  }
+  const docRef = doc(db, 'users', user.uid);
+  await setDoc(
+    docRef, { skinType }, {merge:true} //update skintype field only
+  );
   return null;
 }
