@@ -1,4 +1,4 @@
-const getReapplicationRecommendation = (skinType: string | number, uvIndex: any,spfFactor: any,activity: any,exposure: any ) => {
+const getReapplicationRecommendation = (skinType: string | null, uvIndex: any,spfFactor: any,activity: any,exposure: any ) => {
   let score = 0;
 
   //add scores to skin types
