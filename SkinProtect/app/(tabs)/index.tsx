@@ -398,12 +398,12 @@ export default function Index() {
     return `${hrs}:${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
-  //colors for countdown
-  const countdownColors = [
-    ['#004777', 0.33],  // Assuming this is how colors are defined
-    ['#F7B801', 0.33],
-    ['#A30000', 1]      // Assuming you want it with full opacity
-  ];
+  //colors for countdown 
+  // const countdownColors = [
+  //   ['#004777', 0.33],  
+  //   ['#F7B801', 0.33],
+  //   ['#A30000', 1]      
+  // ];
 
   return (
     <View style={[styles.container, { paddingTop: safeTop }]}>
