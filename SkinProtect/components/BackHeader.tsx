@@ -7,18 +7,6 @@ import { Colors } from '@/constants/colors'
 
 
 export default function BackHeader() {
-  // const router = useRouter();
-
-  // return (
-  //   <View style={styles.container}>
-  //     <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-  //       <Ionicons name="arrow-back" size={20} color="#fff">
-  //           <Text style={styles.title}>Go Back</Text>
-  //       </Ionicons>
-  //     </TouchableOpacity>
-      
-  //   </View>
-  // );
   const navigation = useNavigation();
 
   return (
@@ -33,23 +21,6 @@ export default function BackHeader() {
 };
 
 const styles = StyleSheet.create({
-  //new styles
-  // header: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   justifyContent: 'space-between',
-  //   padding: 10,
-  //   backgroundColor: Colors.prussianBlue, // Match your background
-  //   paddingHorizontal: 20,
-  //   paddingVertical: 10,
-  //   //position: 'absolute', // Make it absolute
-  //   top: 0, // Position it at the top
-  //   left: 0,
-  //   right: 0, 
-  //   marginTop: '10%',
-  //   borderBottomWidth: 1,
-  //   borderBottomColor: Colors.lightGrey, 
-  // },
   container: {
     flexDirection: 'row',
     alignItems: 'center',

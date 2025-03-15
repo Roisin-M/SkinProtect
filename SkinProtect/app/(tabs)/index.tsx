@@ -1,4 +1,4 @@
-import { View, Image, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Modal, StatusBar, TextInput, Pressable, FlatList } from 'react-native';
+import { View, Image, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Modal, StatusBar, TextInput, Pressable, FlatList, Alert } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { getDailyUvi} from '@/services/OpenWeatherService';
@@ -13,7 +13,7 @@ import { router } from 'expo-router';
 //authentication
 import ProfileHeader from '@/components/ProfileHeader';
 //reapplication
-import getReapplicationRecommendation from '../utils/getReapplicationRecommendation';
+import getReapplicationRecommendation from '../../services/getReapplicationRecommendation';
 //countdown
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import * as Progress from 'react-native-progress';
@@ -63,7 +63,39 @@ export default function Index() {
     reapplication: "Reapplying sunscreen is crucial for maintaining effective protection against UV radiation. The frequency of reapplication depends on your activity and the UV index. If you are outdoors in direct sunlight for extended periods, sunscreen should be reapplied regularly to maintain its effectiveness. In contrast, if you spend most of your time indoors, a single morning application may be sufficient. Always reapply every 2 hours if sweating, swimming, or exposed to strong UV rays. But keep in mind this is only a recommendation and you should still consider all factors when deciding if you need to reapply more frequently!",
     spfChange: "If you don’t have the recommended SPF, you can select the one you have, and I’ll adjust the reapplication for you! But keep in mind the UV index—if it’s high, using low SPF factors won’t be effective at all!",
     spfBackToRecommended: "Want to check the recommended SPF instead of the one you selected? This button is here for you!",
+    firstWelcome: "Welcome! I am your sun protection buddy. Click any of the question mark icons if you are unsure about anything. Let's start with your UV profile to determine your skin type and calculate recommended SPF!",
+    regularWelcome: "Welcome back! Remember to apply sunscreen today.",
   };
+
+  // State to hold the buddy message timeout reference
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
+
+  //function to automatically show buddy welcome message
+  useEffect(() => {
+      const checkFirstLaunch = async () => {
+        const hasLaunched = await AsyncStorage.getItem('hasLaunched');
+  
+        if (!hasLaunched) {
+          //first launche ever message
+          showBuddyMessage('firstWelcome');
+          await AsyncStorage.setItem('hasLaunched', 'true'); //mark as launched
+        } else {
+            // Not the first launch, but welcome back message hasn't been shown
+            showBuddyMessage('regularWelcome');
+        }
+
+        // Set a timeout to hide the message after a few seconds
+        const timer = setTimeout(() => {
+          if (buddyHeaderRef.current) {
+            buddyHeaderRef.current.updateMessage("", false); // Clear the message
+            buddyHeaderRef.current.handleClosePopup(); // Close the popup
+          }
+        }, 10000); // 10 seconds
+
+      };
+      checkFirstLaunch();
+    }, []);
 
   //show buddy messages
   const showBuddyMessage = (key: keyof typeof infoMessages) => {
@@ -88,19 +120,6 @@ export default function Index() {
 
   //const to keep track of day/night time
   let dayTime = true;
-  
-  //method to determine if it is day or night
-  useEffect(() => {
-    const currentHour = new Date().getHours();
-    if (currentHour >= 6 && currentHour < 24){ 
-      //daytime
-      setImageSource(require('../../assets/images/sun.png'));
-    } else {
-      //nighttime
-      dayTime = false;
-      setImageSource(require('../../assets/images/moon.png'));
-    }
-  }, []);
 
   //Load the user's skin type
   async function loadSkinType(): Promise<string | null> {
@@ -249,85 +268,6 @@ export default function Index() {
       };
     }, [dayTime])
   );
-  // Re-run every time this screen is focused
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     let isActive = true;
-  //     const fetchEverything = async ()=>{
-  //       setIsLoading(true);
-  //       try {
-  //         //Get UV + Skin Type + Activities from AsyncStorage
-  //         const skinTypeStr = await AsyncStorage.getItem('skinType'); 
-  //         const storedLat = await AsyncStorage.getItem('latitude');
-  //         const storedLon = await AsyncStorage.getItem('longitude');
-  //         const storedUvIndex = await AsyncStorage.getItem('uvIndex');
-          
-  //         const reapActivity = await AsyncStorage.getItem('activity');
-  //         const reapExposure = await AsyncStorage.getItem('exposure');
-  //         const skinType = await AsyncStorage.getItem('skinType');
-
-  //         if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
-  //         if(reapActivity) setReapplicationActivity(reapActivity);
-  //         if (reapExposure) setReapplicationExposure(reapExposure);
-  //         if (skinType) setSkinType(skinType);
-
-  //         // If missing, default to 'N/A'
-  //         if (!skinTypeStr || !storedLat || !storedLon) {
-  //           if (isActive) {
-  //             setRecommendedSPF('N/A');
-  //           }
-  //         } else {
-  //           //check if it is day time
-  //           if (dayTime == true) {
-  //             //const uvNumber = parseFloat(uvIndex);
-  //             const lat = parseFloat(storedLat);
-  //             const lon = parseFloat(storedLon);
-  //             const uvDailyData = await getDailyUvi(lat, lon);
-
-  //             // Calculate the SPF
-  //             const spf = await calculateSPF(uvDailyData, skinTypeStr);
-  //             if (isActive) {
-  //               setRecommendedSPF(spf);
-  //               // Save the calculated SPF to AsyncStorage
-  //               try {
-  //                 await AsyncStorage.setItem('calculatedSPF', JSON.stringify(spf));
-  //               } catch (error) {
-  //                 console.error('Error saving SPF to AsyncStorage:', error);
-  //               }
-  //             }
-  //           } else {
-  //             setRecommendedSPF('Not Needed');
-  //           }
-            
-  //         }
-  //       } catch (error) {
-  //         console.error('Error in HomeScreen fetching data from storage:', error);
-  //       } finally {
-  //         if (isActive) {
-  //       try{
-  //         //load user or guest skin type
-  //         const foundSkinType = await loadSkinType();
-  //         if(isActive){
-  //           //await fetchSPFData();
-  //           setSkinType(foundSkinType);
-  //           console.log('new skin type '+ skinType);
-  //           //console.log(recommendedSPF);
-  //         }
-  //       } catch(error){
-  //         console.error('Error in HomeScreen fetching SPF:', error);
-  //       } finally{
-  //         if(isActive){
-  //           setIsLoading(false);
-  //         }
-  //       }
-  //     };
-  //     fetchEverything();
-  //     // if user leaves screen before fetch finishes
-  //     return () => {
-  //       isActive = false;
-  //     };
-  //   }, [dayTime])
-  // );
 
   // data for changing spf value
   const spfOptions: spfType[] = [
@@ -387,7 +327,7 @@ export default function Index() {
 
     if (reapRecommendation === 1) {
       setReapplicationTime(0); //no reapplication here needed
-      setMessage('No Need for SPF today');
+      setMessage('No Need for SPF');
     } 
     else if (reapRecommendation === 2) {
       setReapplicationTime(0); //no reapplication here needed
@@ -414,7 +354,11 @@ export default function Index() {
           return prev -1;
         }else{
           clearInterval(interval);
-          alert("Time to reapply SPF!")
+          
+          // Show alert only for reapply recommendations of 2 or 4 hours
+          if (reapRecommendation === 3 || reapRecommendation === 4) {
+            Alert.alert("Time to reapply SPF!");
+          }
 
           //reset the countdown
           setTimeout(() => {
@@ -433,22 +377,6 @@ export default function Index() {
     return () => clearInterval(interval);
   }, [reapplicationTime]);
 
-  // useEffect(() => {
-  //         const timer = setInterval(() => {
-  //             setElapsedTime((prev) => {
-  //                 if (prev < duration) {
-  //                     return prev + 1;
-  //                 } else {
-  //                     clearInterval(timer);
-  //                     alert("Time to reapply SPF!");
-  //                     return prev;
-  //                 }
-  //             });
-  //         }, 1000); //update every second
-  
-  //         return () => clearInterval(timer); //cleanup on unmount
-  //     }, [duration]);
-
   // Convert seconds to HH:MM:SS
   const formatTime = (seconds: number) => {
     const hrs = Math.floor(seconds / 3600);
@@ -457,12 +385,29 @@ export default function Index() {
     return `${hrs}:${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
-  //colors for countdown 
-  // const countdownColors = [
-  //   ['#004777', 0.33],  
-  //   ['#F7B801', 0.33],
-  //   ['#A30000', 1]      
-  // ];
+  //method to determine the picture based on UV strength and day/night time
+  useEffect(() => {
+    const currentHour = new Date().getHours();
+    if (currentHour >= 6 && currentHour < 24){ 
+      //daytime
+      if (uvIndex === null) {
+        setImageSource(require('../../assets/images/sun.png')); // Default image for no UV data
+        return; 
+      }
+    
+      const UV = uvIndex;
+      if (UV <= 2)
+        setImageSource(require('../../assets/images/clouds.png'));
+      else if (UV <= 5)
+        setImageSource(require('../../assets/images/cloudySun.png'));
+      else if (UV > 5)
+        setImageSource(require('../../assets/images/sun.png'));
+    } else {
+      //nighttime
+      dayTime = false;
+      setImageSource(require('../../assets/images/moon.png'));
+    }
+  }, [uvIndex]);
 
   return (
     <View style={[styles.container, { paddingTop: safeTop }]}>
@@ -609,9 +554,9 @@ export default function Index() {
               {/* <ProgressBar duration={reapplicationTime} /> */}
               <Text style={styles.countdown}>Reapply sunscreen in: {formatTime(reapplicationTime)}</Text>
               {/* Add a button to change reapplication time to 5 sec for testing */}
-              <Pressable onPress={() => setReapplicationTime(5)}>
+              {/* <Pressable onPress={() => setReapplicationTime(5)}>
                 <Text style={styles.debugButton}>Trigger Timer End</Text>
-              </Pressable>
+              </Pressable> */}
               {/* <ActivityIndicator size="small" color={Colors.highLightYeelow} /> */}
             </View>
           ) : reapplicationTime !== null ? (
