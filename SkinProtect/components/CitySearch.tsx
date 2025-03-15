@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, TouchableOpacity, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { searchCity, PlaceResult } from '../services/GooglePlacesService';
 import { Colors } from '@/constants/colors';
 
@@ -42,7 +42,9 @@ export default function CitySearch({ onSelectCity }:CitySearchProps) {
         value={query}
         onChangeText={setQuery}
       />
-      <Button title="Search" onPress={handleSearch} />
+      <TouchableOpacity style={styles.btn} onPress={handleSearch}>
+        <Text style={styles.btnText}>Search and Select</Text>
+      </TouchableOpacity>
       {loading && <Text style={styles.loadingText}>Loading...</Text>}
       <ScrollView style={styles.scrollContainer}>
         {results.map((item, index) => (
@@ -55,9 +57,6 @@ export default function CitySearch({ onSelectCity }:CitySearchProps) {
             {item.formattedAddress ? (
               <Text style={styles.resultAddress}>{item.formattedAddress}</Text>
             ) : null}
-            <Text style={styles.resultCoords}>
-              Lat: {item.latitude}, Lon: {item.longitude}
-            </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -98,8 +97,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.softText,
   },
-  resultCoords: {
-    fontSize: 12,
-    color: Colors.softText,
+  btn: {
+    backgroundColor: Colors.prussianBlue,
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  btnText: {
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
