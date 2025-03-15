@@ -42,7 +42,6 @@ const SunExposure = () => {
           <View style={styles.infoBox}>
             <Text style={styles.infoText}>Activity: {activity}</Text>
             <Text style={styles.infoText}>Exposure: {exposure} </Text>
-            <Text style={styles.infoText}>Result: {result} </Text>
           </View>
           <Pressable
             style={styles.button}

@@ -6,61 +6,28 @@ import { Colors } from '@/constants/colors';
 // Define the ref interface
 export interface BuddyHeaderRef {
     updateMessage: (newMessage: string, isInfoMessage?: boolean) => void;
+    handleClosePopup: () => void;
 }
 
 const BuddyHeader = forwardRef<BuddyHeaderRef>((props, ref) => {
   const [showPopup, setShowPopup] = useState(false);
-  const [isFirstLaunch, setIsFirstLaunch] = useState(false);
   const [message, setMessage] = useState('');
   const [showInfoMessage, setShowInfoMessage] = useState(false);
   const slideAnim = new Animated.Value(-20); // Start off-screen
 
   const { height: screenHeight } = Dimensions.get('window');
   const buddyPopupHeight = 200; //max height of the popup
-  const popupTopPosition = screenHeight - buddyPopupHeight < 20 ? screenHeight - buddyPopupHeight - 20 : 20; 
-  
-  useEffect(() => {
-    const checkFirstLaunch = async () => {
-      const hasLaunched = await AsyncStorage.getItem('hasLaunched');
-
-      if (!hasLaunched) {
-        //first launche ever message
-        setMessage("Welcome! I am your sun protection buddy. Click any of the question mark icons if you are unsure about anything. Let's start with your UV profile to determine your skin type and calculate recommended SPF!");
-        setShowPopup(true);
-        setIsFirstLaunch(true);
-        await AsyncStorage.setItem('hasLaunched', 'true'); //mark as launched
-      } else {
-        //if (!hasShownWelcomeBack) {
-          // Not the first launch, but welcome back message hasn't been shown
-          setMessage("Welcome back! Remember to apply sunscreen today.");
-          setShowPopup(true);
-          setTimeout(() => setShowPopup(false), 4000);
-      //}
-    }
-    };
-    checkFirstLaunch();
-  }, []);
+  //const popupTopPosition = screenHeight - buddyPopupHeight < 20 ? screenHeight - buddyPopupHeight - 20 : 20; 
 
   useEffect(() => {
-    if (showPopup) {
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      Animated.timing(slideAnim, {
-        toValue: -100,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    }
+    Animated.timing(slideAnim, {
+      toValue: showPopup ? 0 : -buddyPopupHeight,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
   }, [showPopup]);
 
   const handleBuddyPress = () => {
-    if (isFirstLaunch) {
-        handleClosePopup();
-      }
       setMessage("If you have any questions, click the little yellow question marks to get explanations or check out the About page for general info.");
       setShowInfoMessage(true);
       setShowPopup(true);
@@ -80,6 +47,7 @@ const BuddyHeader = forwardRef<BuddyHeaderRef>((props, ref) => {
   // Expose the updateMessage method to the ref
   useImperativeHandle(ref, () => ({
     updateMessage,
+    handleClosePopup,
   }));
 
 
@@ -95,11 +63,9 @@ const BuddyHeader = forwardRef<BuddyHeaderRef>((props, ref) => {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
               <Text style={styles.popupText}>{message}</Text>
             </ScrollView>
-            {(isFirstLaunch || showInfoMessage ) && (
               <TouchableOpacity onPress={handleClosePopup}>
                 <Text style={styles.closeText}>Got it!</Text>
               </TouchableOpacity>
-            )}
           </View>
         </Animated.View>
       )}

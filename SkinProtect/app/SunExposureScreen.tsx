@@ -29,9 +29,27 @@ export default function SunExposureScreen() {
   
     //const with info messages
     const infoMessages = {
+      warning: "Please select the activity type and exposure level if applicable before submitting. This helps ensure that you receive the best sun protection recommendations!☀️",
       activities: "Knowing what type of activities you’ll be doing today is super important! Different activities expose you to the sun in different ways ☀️🌳. Let’s figure out how much sun you’ll get today! 🌞",
       exposure: "Understanding your exposure helps with choosing the right sunscreen 🧴☀️ and how often to apply it ⏰, so your skin stays safe while you enjoy your day!",
     };
+
+    //function to automatically show buddy message
+      useEffect(() => {
+        // Show the welcome message when the component mounts
+        showBuddyMessage('warning');
+      
+        // Set a timeout to hide the message after a few seconds
+        const timer = setTimeout(() => {
+          if (buddyHeaderRef.current) {
+            buddyHeaderRef.current.updateMessage("", false); // Clear the message
+            buddyHeaderRef.current.handleClosePopup(); // Close the popup
+          }
+        }, 10000); // 10 seconds
+      
+        // Cleanup function to clear the timer if the component unmounts
+        return () => clearTimeout(timer);
+      }, []);
   
     //show buddy messages
     const showBuddyMessage = (key: keyof typeof infoMessages) => {
