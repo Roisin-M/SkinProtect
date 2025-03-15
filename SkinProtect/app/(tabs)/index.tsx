@@ -25,7 +25,7 @@ import { string } from 'zod';
 
 export default function Index() {
   //const [skinType, setSkinType] = useState<string|null>(null);
-  const [recommendedSPF, setRecommendedSPF] = useState<string | number>('...');
+  const [recommendedSPF, setRecommendedSPF] = useState<string | number |null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { top: safeTop } = useSafeAreaInsets();
   const [uvIndex, setUvIndex] = useState<number | null>(null);
@@ -165,8 +165,6 @@ export default function Index() {
   
   const fetchSPFData = async () => {
       //Get UV + Skin Type from AsyncStorage
-      const storedLat = await AsyncStorage.getItem('latitude');
-      const storedLon = await AsyncStorage.getItem('longitude');
       const storedUvIndex = await AsyncStorage.getItem('uvIndex');
       
       //fetch skin type, activities and exposure data
@@ -180,20 +178,24 @@ export default function Index() {
       if (skinType) setSkinType(skinType);
 
       // If missing, default to 'N/A'
-      if (!skinType || !storedLat || !storedLon) {
-          setRecommendedSPF('N/A');
-          console.log('in fetchspfdata() : if missing? recommendedspf is set to N/A');
-          console.log('skintype: '+ skinType);
-      } 
-      else{
+      // if (!skinType ) {
+      //     setRecommendedSPF('N/A');
+      //     console.log('in fetchspfdata() : if missing? recommendedspf is set to N/A');
+      //     console.log('skintype: '+ skinType);
+      // } 
+      
         //check if it is day time
        if (dayTime == true) {
           //const uvNumber = parseFloat(uvIndex);
-            const lat = parseFloat(storedLat);
-            const lon = parseFloat(storedLon);
-            const uvDailyData = await getDailyUvi(lat, lon);
+          let uvDailyData;
+            if(latitude && longitude){
+              uvDailyData = await getDailyUvi(latitude, longitude);
+            }
             // Calculate the SPF
-            const spf = await calculateSPF(uvDailyData, skinType);
+            let spf = null;
+            if(skinType){
+              spf = await calculateSPF(uvDailyData, skinType);
+            }
             console.log('skintype: '+ skinType);
             setRecommendedSPF(spf);
   
@@ -207,7 +209,7 @@ export default function Index() {
           else{
             setRecommendedSPF('Not Needed');
           }
-      }
+      
     };
 
     //wait on skin type update before fetching spf

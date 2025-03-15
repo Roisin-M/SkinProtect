@@ -8,12 +8,16 @@ export async function calculateSPF(uvIndex: number, skinTypeString: string): Pro
     let uvCategory: 'low' | 'moderate' | 'high' | 'extreme';
     if (uvIndex <= 2) {
       uvCategory = 'low';
+      console.log('uvIndex <= 2, uv category is low',uvIndex);
     } else if (uvIndex <= 5) {
       uvCategory = 'moderate';
+      console.log('uvIndex <= 5, uv category is moderate',uvIndex);
     } else if (uvIndex <= 7) {
       uvCategory = 'high';
+      console.log('uvIndex <= 7, uv category is high',uvIndex);
     } else {
       uvCategory = 'extreme'; // for 8–10, 11+
+      console.log('uvIndex in else, uv category is extreme',uvIndex);
     }
   
     //Decide the SPF based on (UV category + skin type).
@@ -22,25 +26,25 @@ export async function calculateSPF(uvIndex: number, skinTypeString: string): Pro
         // UV 1-2
         // Skin types 1–3 => SPF 10, types 4–6 => SPF 6
         if (skinType >= 1 && skinType <= 3) {
-            return 10;
+          return 10;
         }
         else{
-
-            return 6; // for types 4–6
+          return 6; // for types 4–6
         }
   
       case 'moderate':
         // UV 3–5
         // Skin type 1–2 => 25, type 3–4 => 20, type 5–6 => 15
         if (skinType === 1 || skinType === 2) 
-            {return 25;}
+        {
+          return 25;
+        }
         if (skinType === 3 || skinType === 4) 
         {
             return 20;
         }
         else{
-
-            return 15; // 5 or 6
+          return 15; // 5 or 6
         }
   
       case 'high':
@@ -49,10 +53,9 @@ export async function calculateSPF(uvIndex: number, skinTypeString: string): Pro
         if (skinType >= 1 && skinType <= 3){
         return 50;
         }
-            else{
-
-                return 30; // 4–6
-            }
+        else{
+          return 30; // 4–6
+        }
   
       case 'extreme':
         // UV 8–10, 11+
