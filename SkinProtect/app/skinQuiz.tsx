@@ -1,5 +1,4 @@
-import { Text, View, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
-import CustomHeader from '@/components/BackHeader';
+import { Text, View, StyleSheet, TouchableOpacity, FlatList, Alert, Dimensions } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import skinQuizQuestions from '@/assets/json/skinQuizQuestions.json'
@@ -10,6 +9,8 @@ import { updateUserSkinType } from '@/services/profileService';
 import Header, { BuddyHeaderRef } from '@/components/BuddyHeader';
 import ProfileHeader from '@/components/ProfileHeader';
 import BackHeader from '@/components/BackHeader';
+
+const { height, width } = Dimensions.get('window'); // Get screen dimensions
 
 export default function SkinQuizScreen() {
   // Use the safe area insets
@@ -73,7 +74,7 @@ export default function SkinQuizScreen() {
       }
   
       // Navigate back to tabs screen
-      router.push('/(tabs)');
+      router.push('/(tabs)/summary');
     }
     
   };
@@ -87,29 +88,28 @@ export default function SkinQuizScreen() {
     return 'Type VI (Black)';
   };
 
-  const resetQuiz = () => {
-    setCurrentQuestionIndex(0);
-    setTotalScore(0);
-  };
+  // const resetQuiz = () => {
+  //   setCurrentQuestionIndex(0);
+  //   setTotalScore(0);
+  // };
 
   const renderQuestion = () => {
     const question = skinQuizQuestions[currentQuestionIndex];
+
     return (
-      <View>
-        <View style={styles.questionContainer}>
+      <View style={styles.questionContainer}>
         <Text style={styles.question}>{question.question}</Text>
-      </View>
-      <View style={styles.optionsContainer}>
-        {question.options.map((option, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.option}
-            onPress={() => handleOptionPress(option.score)}
-          >
-            <Text style={styles.optionText}>{option.text}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+        <View style={styles.optionsContainer}>
+          {question.options.map((option, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.option}
+              onPress={() => handleOptionPress(option.score)}
+            >
+              <Text style={styles.optionText}>{option.text}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     );
   };
@@ -117,17 +117,21 @@ export default function SkinQuizScreen() {
   return (
     <View style={[styles.container, {paddingTop:safeTop}]}>
       {/* Header components row */}
-      <View style={styles.headerRowContainer}>
-        <Header ref={buddyHeaderRef}/>
-        <ProfileHeader/>
+      <View style={styles.headerContainer}>
+        <Header ref={buddyHeaderRef} />
+        <ProfileHeader />
       </View>
+
+      {/* Back Button */}
       <View style={styles.backHeader}>
-        <CustomHeader/> 
+        <BackHeader />
       </View>
+
+      {/* Quiz Content */}
       <View style={styles.quizContainer}>
         {renderQuestion()}
         <Text style={styles.progress}>
-          Question {currentQuestionIndex +1} of {skinQuizQuestions.length}
+          Question {currentQuestionIndex + 1} of {skinQuizQuestions.length}
         </Text>
       </View>
     </View>
@@ -138,58 +142,49 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.prussianBlue,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width:'100%',
+    width: '100%',
   },
-  headerRowContainer: {
-    position: 'absolute',
-    top: 20, 
-    left: 0, 
-    right: 0,
-    zIndex: 1000,
+  headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    marginTop: 40,
+    marginTop: 20,
   },
   backHeader: {
-    position: 'absolute', // For fixed positioning in React Native
-    top: 50,
-    left: 15,
+    marginTop: 10, // Push below header
+    paddingHorizontal: 20,
   },
   quizContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingHorizontal: 20,
     width: '100%',
+    paddingHorizontal: 20,
+    marginTop: 50,
   },
   questionContainer: {
-    height: 100,
-    justifyContent: 'center',
+    width: '100%',
     alignItems: 'center',
     marginBottom: 20,
   },
   question: {
     color: Colors.white,
-    fontSize: 25,
+    fontSize: 24,
     fontWeight: '600',
-    marginBottom: 20,
     textAlign: 'center',
+    marginBottom: 20,
   },
   optionsContainer: {
-    justifyContent: 'center',
+    width: '100%',
     alignItems: 'center',
-    marginBottom: 20,
   },
   option: {
     backgroundColor: Colors.background,
     borderRadius: 8,
     marginBottom: 10,
-    width: 300, 
-    height: 50, 
+    width: width * 0.8, // 80% of screen width
+    height: 50,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -199,7 +194,7 @@ const styles = StyleSheet.create({
   },
   progress: {
     color: Colors.white,
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 20,
   },
 });

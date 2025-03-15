@@ -1,4 +1,4 @@
-import { View, Image, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Modal, StatusBar, TextInput, Pressable, FlatList, Alert } from 'react-native';
+import { View, Image, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Modal, StatusBar, TextInput, Pressable, FlatList, Alert, Platform } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { getDailyUvi} from '@/services/OpenWeatherService';
@@ -44,9 +44,6 @@ export default function Index() {
     value: number;
   };
 
-  //mock user activity
-  const [activity, setActivity] = useState("outdoor_direct");
-
   //reapplication states
   const [reapplicationTime, setReapplicationTime] = useState<number | null>(null); // Countdown will be in seconds
   const [message, setMessage] = useState('Not Available');
@@ -66,10 +63,6 @@ export default function Index() {
     firstWelcome: "Welcome! I am your sun protection buddy. Click any of the question mark icons if you are unsure about anything. Let's start with your UV profile to determine your skin type and calculate recommended SPF!",
     regularWelcome: "Welcome back! Remember to apply sunscreen today.",
   };
-
-  // State to hold the buddy message timeout reference
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
-
 
   //function to automatically show buddy welcome message
   useEffect(() => {
@@ -104,7 +97,7 @@ export default function Index() {
     }
   };
 
-  // //Function to clear AsyncStorage
+  //Function to clear AsyncStorage -- for testing purposes
   const clearAsyncStorage = async () => {
     await AsyncStorage.clear();
     console.log('AsyncStorage cleared');
@@ -115,10 +108,10 @@ export default function Index() {
     //clearAsyncStorage();
   }, []);
 
-  //image source to be changed as needed
+  //const to hold image source that will be changed as needed
   const [imageSource, setImageSource] = useState(require('../../assets/images/sun.png'));
 
-  //const to keep track of day/night time
+  //bool to keep track of day/night time
   let dayTime = true;
 
   //Load the user's skin type
@@ -149,6 +142,7 @@ export default function Index() {
     // If none found, return null
     return null;
   }
+
   //load location
   async function loadLocation(): Promise<{ latitude: number; longitude: number } | null> {
     try {
@@ -178,12 +172,12 @@ export default function Index() {
       //fetch skin type, activities and exposure data
       const reapActivity = await AsyncStorage.getItem('activity');
       const reapExposure = await AsyncStorage.getItem('exposure');
-      //const skinType = await AsyncStorage.getItem('skinType');
+      const skinType = await AsyncStorage.getItem('skinType');
 
       if (storedUvIndex) setUvIndex(parseFloat(storedUvIndex));
       if(reapActivity) setReapplicationActivity(reapActivity);
       if (reapExposure) setReapplicationExposure(reapExposure);
-      //if (skinType) setSkinType(skinType);
+      if (skinType) setSkinType(skinType);
 
       // If missing, default to 'N/A'
       if (!skinType || !storedLat || !storedLon) {
@@ -232,7 +226,7 @@ export default function Index() {
     }, [skinType, latitude, longitude]);
     
 
-     // Re-run every time this screen is focused
+  // Re-run every time this screen is focused
   useFocusEffect(
     React.useCallback(() => {
       let isActive = true;
@@ -269,7 +263,7 @@ export default function Index() {
     }, [dayTime])
   );
 
-  // data for changing spf value
+  // data for changing spf value - when user wants to use their own spf
   const spfOptions: spfType[] = [
     { name: 'SPF 2', value: 2 },
     { name: 'SPF 4', value: 4 },
@@ -537,35 +531,17 @@ export default function Index() {
           {isLoading ? (
             <ActivityIndicator size="small" color="yellow" />
           ) : reapplicationTime !== null && reapplicationTime > 0 ? (
-            // <CountdownCircleTimer
-            //   isPlaying
-            //   duration={reapplicationTime}
-            //   size={80} 
-            //   colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
-            //   colorsTime={[10, 6, 3, 0]}
-            //   onComplete={() => ({ shouldRepeat: true, delay: 2 })}
-            // >
-            //   {({ remainingTime }) => (
-            //     <Text style={styles.countdown}>{formatTime(remainingTime)}</Text>
-            //   )}
-            // </CountdownCircleTimer>
             <View>
-              {/* <Progress.Bar progress={reapplicationTime} width={200} color={Colors.paletteDarkerYellow}/> */}
-              {/* <ProgressBar duration={reapplicationTime} /> */}
               <Text style={styles.countdown}>Reapply sunscreen in: {formatTime(reapplicationTime)}</Text>
               {/* Add a button to change reapplication time to 5 sec for testing */}
               {/* <Pressable onPress={() => setReapplicationTime(5)}>
                 <Text style={styles.debugButton}>Trigger Timer End</Text>
               </Pressable> */}
-              {/* <ActivityIndicator size="small" color={Colors.highLightYeelow} /> */}
             </View>
-          ) : reapplicationTime !== null ? (
-            <Text style={styles.countdown}>Next in: {formatTime(reapplicationTime)}</Text>
           ) : (
             <Text style={styles.value}>{message}</Text>
           )}
         </View>
-
       </View>
     </View>
   );
@@ -575,25 +551,29 @@ const styles = StyleSheet.create({
  container: {
     flex: 1,
     backgroundColor: Colors.prussianBlue,
-    //rjustifyContent: 'center',
-    //alignItems: 'center',
-  },
-  main: {
-    marginTop: 80,
-    alignContent: 'center',
-    justifyContent: 'center',
   },
   headerRowContainer:{
-    position: 'absolute',
-    top: 20, 
-    left: 0, 
-    right: 0,
-    zIndex: 1000,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    marginTop: 40,
+    marginTop: 20,
+  },
+  main: {
+    flexGrow: 1, // Ensures scrollable content if needed
+    paddingHorizontal: 10,
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  weatherPictureContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  weatherPicture: {
+    width: 250,
+    height: 250,
   },
   heading1: {
     color: Colors.textLight,
@@ -608,16 +588,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     marginBottom: 25,
-  },
-  weatherPictureContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 60,
-    marginBottom: 20,
-  },
-  weatherPicture: {
-    width: 250,
-    height: 250,
   },
   loadingContainer: {
     flexDirection: "row",

@@ -1,4 +1,4 @@
-import { View,  StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
+import { View,  Platform, StyleSheet, ScrollView, Text, TouchableOpacity, Dimensions } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import SunExposure from "@/components/SunExposure";
@@ -15,10 +15,13 @@ import { Ionicons } from '@expo/vector-icons';
 import ProfileHeader from '@/components/ProfileHeader';
 import { Colors } from '@/constants/colors';
 
+const { height, width } = Dimensions.get('window'); // Get screen dimensions
+
 export default function SummaryScreen() {
   // Use the safe area insets
   const { top: safeTop } = useSafeAreaInsets();
-      // States for UV index and location
+  
+  // States for UV index and location
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [uvIndex, setUvIndex] = useState<number | null>(null);
@@ -80,28 +83,27 @@ const handleLocationUpdate = async (lat: number, lon: number) => {
     return (
         <View style={[styles.container, {paddingTop:safeTop}]}>
             {/* Header components row */}
-      <View style={styles.headerRowContainer}>
-        <Header ref={buddyHeaderRef}/>
-        <ProfileHeader/>
-      </View>
-            
-              <ScrollView >
-              <View style={styles.main}>
-                <Text style={styles.heading}>
-                  Skin & Sun
-                  <TouchableOpacity onPress={() => showBuddyMessage("info")}>
-                    <Ionicons name="help-circle" color={Colors.highLightYeelow} size={24} style={styles.icon} />
-                  </TouchableOpacity>
-                </Text>
-                {/* Location Component */}
-                <LocationHome onLocationUpdate={handleLocationUpdate} />
-                {/* UV Index component */}
-                <UVHome uvIndex={uvIndex}/> 
-                {/* Skin Quiz Component */}
-                <SkinQuiz/>
-                {/*Sun Exposure Component*/}
-                <SunExposure /> 
-                 </View>
+              <View style={styles.headerRowContainer}>
+                <Header ref={buddyHeaderRef}/>
+                <ProfileHeader/>
+              </View>
+              <ScrollView style={styles.scrollContainer}>
+                <View style={styles.main}>
+                  <Text style={styles.heading}>
+                    Skin & Sun
+                    <TouchableOpacity onPress={() => showBuddyMessage("info")}>
+                      <Ionicons name="help-circle" color={Colors.highLightYeelow} size={24} style={styles.icon} />
+                    </TouchableOpacity>
+                  </Text>
+                  {/* Location Component */}
+                  <LocationHome onLocationUpdate={handleLocationUpdate} />
+                  {/* UV Index component */}
+                  <UVHome uvIndex={uvIndex}/> 
+                  {/* Skin Quiz Component */}
+                  <SkinQuiz/>
+                  {/*Sun Exposure Component*/}
+                  <SunExposure /> 
+                </View>
               </ScrollView>
         </View>
     );
@@ -111,12 +113,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.prussianBlue,
-    //alignItems: 'center',
-    //justifyContent: 'center',
+    width: '100%',
+    height: '100%',
   },
   main: {
-    marginTop: 80,
-    alignContent: 'center',
+    flex: 1, // Allows the content to fill available space
     justifyContent: 'center',
   },
   content: {
@@ -130,21 +131,21 @@ const styles = StyleSheet.create({
   heading: {
     color: Colors.textLight,
     textAlign: 'center',
-    fontSize: 40,
+    fontSize: 36,
     fontWeight: 'bold',
-  },icon: {
+  },
+  icon: {
     marginLeft: 8,
   },
   headerRowContainer:{
-    position: 'absolute',
-    top: 20, 
-    left: 0, 
-    right: 0,
-    zIndex: 1000,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    marginTop: 40,
+    marginTop: 20,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    paddingBottom: 80, // Ensures no overlapping at the bottom
   },
 });

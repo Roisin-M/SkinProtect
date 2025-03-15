@@ -1,6 +1,6 @@
 //Sun Exposure Screen Page
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Alert, TouchableOpacity, Dimensions } from 'react-native';
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,6 +9,8 @@ import { Colors } from '@/constants/colors';
 import BackHeader from '@/components/BackHeader';
 import Header, { BuddyHeaderRef } from '@/components/BuddyHeader';
 import ProfileHeader from '@/components/ProfileHeader';
+
+const { height, width } = Dimensions.get('window'); // Get screen dimensions
 
 export default function SunExposureScreen() {
   const [activity, setActivity] = useState('');
@@ -109,13 +111,17 @@ export default function SunExposureScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: safeTop }]}>
-        {/* Header components row */}
-      <View style={styles.headerRowContainer}>
+      {/* Header components row */}
+      <View style={styles.headerContainer}>
         <Header ref={buddyHeaderRef}/>
         <ProfileHeader/>
       </View>
-      <BackHeader ></BackHeader>
+      {/* Back Button */}
+      <View style={styles.backHeader}>
+        <BackHeader />
+      </View>
 
+      <View style={styles.main}>
         <Text style={styles.title}> 
           What type of activities will you be doing today?
           <TouchableOpacity onPress={() => showBuddyMessage("activities")}>
@@ -160,6 +166,7 @@ export default function SunExposureScreen() {
             <Text style={styles.submitButtonText}>SUBMIT</Text>
           </Pressable>
         </View>
+      </View>
     </View>
 );
 };
@@ -167,23 +174,27 @@ export default function SunExposureScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    width: '100%',
     backgroundColor: Colors.prussianBlue,
   },
   headerContainer: {
-    marginBottom: 80,
-  },
-  headerRowContainer:{
-    position: 'absolute',
-    top: 20, 
-    left: 0, 
-    right: 0,
-    zIndex: 1000,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    marginTop: 40,
+    marginTop: 20,
+  },
+  backHeader:{
+    marginTop: 10, // Push below header
+    paddingHorizontal: 20,
+  },
+  main:{
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 20,
+    marginTop: 20,
   },
   title: {
     fontSize: 24,
@@ -233,7 +244,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   submitButtonText: {
-    color: Colors.paletteDark,
+    color: Colors.textLight,
     fontSize: 20,
     textAlign: 'center',
     fontWeight: 'bold',

@@ -170,7 +170,7 @@ export default function SettingsScreen() {
     return (
       <View style={[styles.container, { paddingTop: safeTop }]}>
         <View style={styles.settingsContainer}>
-          <Text style={styles.btnText}>
+          <Text style={styles.heading}>
             Welcome {profile?.firstName} {profile?.lastName}!
           </Text>
           <Pressable style={styles.btn} onPress={handleLogout}>
@@ -378,15 +378,22 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   btn: {
-    backgroundColor: Colors.paletteBlue,
+    backgroundColor: Colors.prussianBlue,
     padding: 10,
     borderRadius: 5,
     marginVertical: 8,
     alignItems: 'center',
+    width: '50%',
+    alignSelf: 'center',
   },
   btnText: {
     color: Colors.textLight,
     fontSize: 16,
+  },
+  heading: {
+    color: Colors.textLight,
+    fontSize: 20,
+    marginVertical: 10,
   },
   switchContainer: {
     marginTop: 16,

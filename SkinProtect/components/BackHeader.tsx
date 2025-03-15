@@ -28,8 +28,6 @@ const styles = StyleSheet.create({
   backButton: {
     flexDirection: 'row',
     padding: 10,
-    marginTop: 100,
-    marginLeft: 1,
   },
   backButtonText: {
     color: '#fff',
