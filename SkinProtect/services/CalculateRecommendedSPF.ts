@@ -1,5 +1,3 @@
-import { Float } from "react-native/Libraries/Types/CodegenTypes";
-
 
 export async function calculateSPF(uvIndex: number, skinTypeString: string): Promise<string | number> {
     
@@ -22,25 +20,25 @@ export async function calculateSPF(uvIndex: number, skinTypeString: string): Pro
         // UV 1-2
         // Skin types 1–3 => SPF 10, types 4–6 => SPF 6
         if (skinType >= 1 && skinType <= 3) {
-            return 10;
+          return 10;
         }
         else{
-
-            return 6; // for types 4–6
+          return 6; // for types 4–6
         }
   
       case 'moderate':
         // UV 3–5
         // Skin type 1–2 => 25, type 3–4 => 20, type 5–6 => 15
         if (skinType === 1 || skinType === 2) 
-            {return 25;}
+        {
+          return 25;
+        }
         if (skinType === 3 || skinType === 4) 
         {
             return 20;
         }
         else{
-
-            return 15; // 5 or 6
+          return 15; // 5 or 6
         }
   
       case 'high':
@@ -49,10 +47,9 @@ export async function calculateSPF(uvIndex: number, skinTypeString: string): Pro
         if (skinType >= 1 && skinType <= 3){
         return 50;
         }
-            else{
-
-                return 30; // 4–6
-            }
+        else{
+          return 30; // 4–6
+        }
   
       case 'extreme':
         // UV 8–10, 11+
@@ -82,12 +79,5 @@ export async function calculateSPF(uvIndex: number, skinTypeString: string): Pro
     }
   }
   
-  
-// Example usage
-(async function testSPF() {
-    console.log(await calculateSPF(2, 'Type I (Very Fair)')); // => 10
-    console.log(await calculateSPF(5, 'Type III (Medium)')); // => 20
-    console.log(await calculateSPF(7, 'Type I (Very Fair)')); // => 50
-    console.log(await calculateSPF(10, 'Type VI (Black)')); // => 50+
-  })();
+
   
