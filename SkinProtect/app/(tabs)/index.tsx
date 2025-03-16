@@ -262,7 +262,7 @@ export default function Index() {
       return () => {
         isActive = false;
       };
-    }, [dayTime])
+    }, [])
   );
 
   // data for changing spf value - when user wants to use their own spf

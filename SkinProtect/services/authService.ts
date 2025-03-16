@@ -1,7 +1,6 @@
 import { auth, db } from "../firebaseConfig";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { create } from "react-test-renderer";
 
 // Register a new user
 export const signUp = async (email: string, password: string) => {
