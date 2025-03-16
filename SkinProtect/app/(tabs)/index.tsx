@@ -56,7 +56,7 @@ export default function Index() {
 
   //const with info messages
   const infoMessages = {
-    spf: "SPF (Sun Protection Factor)☀️ indicates how well sunscreen protects against UVB rays. Higher SPF provides stronger protection. 🧴",
+    spf: "SPF (Sun Protection Factor) ☀️ measures how well sunscreen protects against UVB rays. The SPF is calculated based on the highest UV level of the day, so even if the UV is currently low, the recommended SPF might be higher for stronger protection. 🧴",
     uvIndex: "UV Index measures the level of ultraviolet radiation from the sun🔆. Higher values mean stronger UV exposure and greater risk of skin damage. ⚠️",
     reapplication: "🔄 Reapplying sunscreen is crucial for maintaining effective protection against UV radiation. 🌞 The frequency of reapplication depends on your activity and the UV index. If you are outdoors in direct sunlight for extended periods, sunscreen should be reapplied regularly. 🏖️ Always reapply every 2 hours if sweating, swimming, or exposed to strong UV rays! 🧴",
     spfChange: "If you don’t have the recommended SPF, you can select the one you have, and I’ll adjust the reapplication for you!🌤️ But keep in mind the UV index—if it’s high, using low SPF factors won’t be effective at all! ⚠️",
