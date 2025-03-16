@@ -2,11 +2,6 @@ const getReapplicationRecommendation = (skinType: string | null, uvIndex: any,sp
   let score = 0;
 
   //add scores to skin types
-//   Type II (Fair)';
-//     if (score <= 19) return 'Type III (Medium)';
-//     if (score <= 25) return 'Type IV (Olive)';
-//     if (score <= 31) return 'Type V (Brown)';
-//     return 'Type VI (Black)';
   switch (skinType) {
     case 'Type I (Very Fair)': { 
         score += 3; 
