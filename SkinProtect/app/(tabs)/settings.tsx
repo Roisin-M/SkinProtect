@@ -10,13 +10,13 @@ import {
   ScrollView
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+//import { doc, getDoc } from 'firebase/firestore';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { auth, db } from '../../firebaseConfig';
+import { authInstance, db } from '../../firebaseConfig';
 import { signIn, logOut, signUpWithProfile } from '@/services/authService';
 import { Colors } from '@/constants/colors';
 import { userSignUpSchema, UserSignUpForm } from '@/validation/userSchema';
@@ -26,7 +26,7 @@ export default function SettingsScreen() {
   const { top: safeTop } = useSafeAreaInsets();
 
   // Track user & form mode
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [formMode, setFormMode] = useState<'login' | 'signup'>('login');
 
@@ -71,13 +71,18 @@ export default function SettingsScreen() {
 
   // Auth listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = authInstance.onAuthStateChanged(async (user) => {
       setCurrentUser(user);
       if (user) {
-        const docRef = doc(db, 'users', user.uid);
-        const snapshot = await getDoc(docRef);
-        if (snapshot.exists()) setProfile(snapshot.data());
-        else setProfile(null);
+       // Load user profile from Firestore
+       const userDoc = await db.collection('users').doc(user.uid).get();
+        if (userDoc.exists){
+        setProfile(userDoc.data());
+        }
+        else{
+        setProfile(null);
+        }
+          
       }
     });
     return () => unsubscribe();

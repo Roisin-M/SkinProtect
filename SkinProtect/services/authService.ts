@@ -1,11 +1,11 @@
-import { auth, db } from "../firebaseConfig";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { authInstance, db } from "../firebaseConfig";
+//import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+//import { doc, setDoc } from "firebase/firestore";
 
 // Register a new user
 export const signUp = async (email: string, password: string) => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await authInstance.createUserWithEmailAndPassword(email, password);
     return userCredential.user;
   } catch (error) {
     throw error;
@@ -17,11 +17,11 @@ export const signUpWithProfile = async (email: string, password: string,
   firstName: string, lastName: string ) => {
     try{
       //create user 
-      const userCred = await createUserWithEmailAndPassword(
-        auth, email, password);
+      const userCred = await authInstance.createUserWithEmailAndPassword(
+        email, password);
         const user = userCred.user;
       //writing extra fields to firestore db
-      await setDoc(doc(db, "users", user.uid), {
+      await db.collection("users").doc(user.uid).set({
         firstName,
         lastName,
         email,
@@ -36,7 +36,7 @@ export const signUpWithProfile = async (email: string, password: string,
 // Login user
 export const signIn = async (email: string, password: string) => {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await authInstance.signInWithEmailAndPassword(email, password);
     return userCredential.user;
   } catch (error) {
     throw error;
@@ -46,7 +46,7 @@ export const signIn = async (email: string, password: string) => {
 // Logout user
 export const logOut = async () => {
   try {
-    await signOut(auth);
+    await authInstance.signOut();
   } catch (error) {
     console.error("Logout error:", error);
   }

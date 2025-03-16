@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '@/firebaseConfig';
+//import { onAuthStateChanged } from 'firebase/auth';
+//import { doc, getDoc } from 'firebase/firestore';
+import { authInstance, db } from '@/firebaseConfig';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/colors';
 import { fetchUserProfile } from '@/services/profileService';
@@ -25,7 +25,7 @@ export default function ProfileHeader () {
     }
 
     useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
+      const unsubscribe = authInstance.onAuthStateChanged((user) => {
         if (user) {
           setUid(user.uid);
         } else {

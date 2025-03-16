@@ -1,27 +1,27 @@
-import { auth, db } from '../firebaseConfig';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { authInstance, db } from '../firebaseConfig';
 
 export async function fetchUserProfile() {
-  const user = auth.currentUser;
+  const user = authInstance.currentUser;
   if (!user) {
     return null; // not logged in
   }
-  const docRef = doc(db, 'users', user.uid);
-  const snapshot = await getDoc(docRef);
-  if (snapshot.exists()) {
+  // user document from the "users" collection
+  const snapshot = await db.collection('users').doc(user.uid).get();
+  if (snapshot.exists) {
     return snapshot.data(); // { firstName, lastName, ... }
   }
   return null;
 }
 
-export async function updateUserSkinType(skinType: string){
-  const user = auth.currentUser;
-  if(!user){
+export async function updateUserSkinType(skinType: string) {
+  const user = authInstance.currentUser;
+  if (!user) {
     return null; // not logged in
   }
-  const docRef = doc(db, 'users', user.uid);
-  await setDoc(
-    docRef, { skinType }, {merge:true} //update skintype field only
+  // Update the "skinType" field 
+  await db.collection('users').doc(user.uid).set(
+    { skinType },
+    { merge: true }
   );
   return null;
 }

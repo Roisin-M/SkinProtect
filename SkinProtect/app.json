@@ -10,6 +10,10 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "android": {
+      "package": "com.roisinm.skinprotect",
+      "googleServicesFile": "./google-services.json"
+    },
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -44,9 +48,6 @@
       "eas": {
         "projectId": "e7da7949-f444-4200-893c-9f980832ef5d"
       }
-    },
-    "android": {
-      "package": "com.roisinm.draftskinprotect"
     }
   }
 }

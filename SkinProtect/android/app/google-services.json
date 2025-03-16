@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "520853668992",
+    "firebase_url": "https://skinprotectproject300-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "skinprotectproject300",
+    "storage_bucket": "skinprotectproject300.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520853668992:android:4c60ec72520716ae5e1265",
+        "android_client_info": {
+          "package_name": "com.roisinm.skinprotect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQ-nleUuLc6RfETJ-ot9GoXJThFGbEPWE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
