@@ -9,6 +9,7 @@ import { updateUserSkinType } from '@/services/profileService';
 import Header, { BuddyHeaderRef } from '@/components/BuddyHeader';
 import ProfileHeader from '@/components/ProfileHeader';
 import BackHeader from '@/components/BackHeader';
+import { determineSkinType, calculateNewScore } from '@/services/skinTypeDeterminationLogic';
 
 const { height, width } = Dimensions.get('window'); // Get screen dimensions
 
@@ -57,7 +58,7 @@ export default function SkinQuizScreen() {
   };
 
   const handleOptionPress = async (score : number) => {
-    const newTotalScore = totalScore + score;
+    const newTotalScore = calculateNewScore(totalScore, score);
 
     if (currentQuestionIndex < skinQuizQuestions.length - 1) {
       setTotalScore(newTotalScore);
@@ -78,15 +79,6 @@ export default function SkinQuizScreen() {
       router.push('/(tabs)/summary');
     }
     
-  };
-
-  const determineSkinType = (score: number) => {
-    if (score <= 2) return 'Type I (Very Fair)';
-    if (score <= 5) return 'Type II (Fair)';
-    if (score <= 8) return 'Type III (Medium)';
-    if (score <= 11) return 'Type IV (Olive)';
-    if (score <= 13) return 'Type V (Brown)';
-    return 'Type VI (Black)';
   };
 
   // const resetQuiz = () => {
