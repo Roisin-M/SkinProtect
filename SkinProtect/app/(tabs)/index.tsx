@@ -21,6 +21,7 @@ import ProgressBar from '@/components/ProgressBar';
 import { auth } from '@/firebaseConfig';
 import { fetchUserProfile } from '@/services/profileService';
 import { string } from 'zod';
+import { getReactNavigationConfig } from 'expo-router/build/getReactNavigationConfig';
 
 
 export default function Index() {
@@ -287,10 +288,15 @@ export default function Index() {
     setRecommendedSPF(selectedItem.value); // Update the spf value
     setIsDropdownOpen(false); // Close the dropdown modal
     setIsSPFChangedManually(true); //take a note that spf was changed
+    
+    // Get a new reapplication recommendation based on the new SPF
+    const newReapRecommendation = getReapplicationRecommendation(skinType, uvIndex, selectedItem.value, reapplicationActivity, reapplicationExposure);
+    getReapplication(newReapRecommendation); // Call your method to get the new reapplication based on the new recommendation
   };
 
   //function to reset spf after manually changing it
   const resetSPF = async () => {
+    setIsSPFChangedManually(false); // Reset manual change state
     let isActive = true; //tracking if the component is still active
     setIsLoading(true); //set loading state while fetching
       try {
@@ -299,10 +305,13 @@ export default function Index() {
         if (calculatedSPF !== null){
           // parse it back to number and reset recommendedSPF
           setRecommendedSPF(JSON.parse(calculatedSPF));
+          const newReapRecommendation = getReapplicationRecommendation(skinType, uvIndex, (JSON.parse(calculatedSPF)), reapplicationActivity, reapplicationExposure);
+          getReapplication(newReapRecommendation); 
         } else {
           // If no calculated SPF is found, reset to a default 
           console.log('in resetSPF() : recommendedspf is set to N/A')
           setRecommendedSPF('N/A');
+          setReapplicationTime(null); // Reset reapplication time
         }
         setIsSPFChangedManually(false); //reset the manual change state
       }
@@ -317,8 +326,9 @@ export default function Index() {
 
   // get reapplication recommendation
   const reapRecommendation = getReapplicationRecommendation(skinType, uvIndex, recommendedSPF, reapplicationActivity, reapplicationExposure);
+
   //method to set corresponding message and reapplication time based on the result
-  useEffect(() => {
+  const getReapplication = (reapRecommendation: number) => {
     if (reapRecommendation === null) return;
 
     if (reapRecommendation === 1) {
@@ -337,6 +347,10 @@ export default function Index() {
       setReapplicationTime(7200); //2 hours in seconds
       setMessage('Reapply every 2 hours');
     }
+  };
+
+  useEffect(() => {
+    getReapplication(reapRecommendation);
   }, [reapRecommendation]);
   
   //countdown timer logic
