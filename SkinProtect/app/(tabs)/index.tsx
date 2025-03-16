@@ -399,7 +399,7 @@ export default function Index() {
   //method to determine the picture based on UV strength and day/night time
   useEffect(() => {
     const currentHour = new Date().getHours();
-    if (currentHour >= 6 && currentHour < 24){ 
+    if (currentHour >= 6 && currentHour < 18){ 
       //daytime
       if (uvIndex === null) {
         setImageSource(require('../../assets/images/sun.png')); // Default image for no UV data
