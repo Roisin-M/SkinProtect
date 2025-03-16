@@ -28,8 +28,9 @@ export default function SkinQuizScreen() {
     
   //const with info messages
   const infoMessages = {
-    welcome: "Let’s find out your skin type! Please choose the most accurate answer for each question.",
-  };
+    welcome: "Let’s find out your skin type! Please choose the most accurate answer for each question. 🧴✨",
+};
+
 
   //function to automatically show buddy message
   useEffect(() => {

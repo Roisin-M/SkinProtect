@@ -31,8 +31,9 @@ export default function SummaryScreen() {
 
   //const with info messages
   const infoMessages = {
-    info: "In this section you should provide all the important details to get the best SPF recommendation and reapplication suggestion! Just a few quick steps, and you’ll know exactly how to stay protected while enjoying the sun! 🌞✨",
+    info: "☀️ In this section, you should provide all the important details to get the best SPF recommendation and reapplication suggestion! 🧴 Just a few quick steps, and you’ll know exactly how to stay protected while enjoying the sun! 😎",
   };
+
 
   //show buddy messages
   const showBuddyMessage = (key: keyof typeof infoMessages) => {

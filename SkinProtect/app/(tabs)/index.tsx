@@ -56,14 +56,15 @@ export default function Index() {
 
   //const with info messages
   const infoMessages = {
-    spf: "SPF (Sun Protection Factor) indicates how well sunscreen protects against UVB rays. Higher SPF provides stronger protection.",
-    uvIndex: "UV Index measures the level of ultraviolet radiation from the sun. Higher values mean stronger UV exposure and greater risk of skin damage.",
-    reapplication: "Reapplying sunscreen is crucial for maintaining effective protection against UV radiation. The frequency of reapplication depends on your activity and the UV index. If you are outdoors in direct sunlight for extended periods, sunscreen should be reapplied regularly to maintain its effectiveness. In contrast, if you spend most of your time indoors, a single morning application may be sufficient. Always reapply every 2 hours if sweating, swimming, or exposed to strong UV rays. But keep in mind this is only a recommendation and you should still consider all factors when deciding if you need to reapply more frequently!",
-    spfChange: "If you don’t have the recommended SPF, you can select the one you have, and I’ll adjust the reapplication for you! But keep in mind the UV index—if it’s high, using low SPF factors won’t be effective at all!",
-    spfBackToRecommended: "Want to check the recommended SPF instead of the one you selected? This button is here for you!",
-    firstWelcome: "Welcome! I am your sun protection buddy. Click any of the question mark icons if you are unsure about anything. Let's start with your UV profile to determine your skin type and calculate recommended SPF!",
-    regularWelcome: "Welcome back! Remember to apply sunscreen today.",
+    spf: "SPF (Sun Protection Factor)☀️ indicates how well sunscreen protects against UVB rays. Higher SPF provides stronger protection. 🧴",
+    uvIndex: "UV Index measures the level of ultraviolet radiation from the sun🔆. Higher values mean stronger UV exposure and greater risk of skin damage. ⚠️",
+    reapplication: "🔄 Reapplying sunscreen is crucial for maintaining effective protection against UV radiation. 🌞 The frequency of reapplication depends on your activity and the UV index. If you are outdoors in direct sunlight for extended periods, sunscreen should be reapplied regularly. 🏖️ Always reapply every 2 hours if sweating, swimming, or exposed to strong UV rays! 🧴",
+    spfChange: "If you don’t have the recommended SPF, you can select the one you have, and I’ll adjust the reapplication for you!🌤️ But keep in mind the UV index—if it’s high, using low SPF factors won’t be effective at all! ⚠️",
+    spfBackToRecommended: "Want to check the recommended SPF instead of the one you selected? This button is here for you! 🔙",
+    firstWelcome: "👋 Welcome! I am your sun protection buddy. Click any of the ❓ icons if you are unsure about anything. Let's start with your UV profile to determine your skin type and calculate recommended SPF! 🧴",
+    regularWelcome: "🌞 Welcome back! Remember to apply sunscreen today. 🧴",
   };
+
 
   //function to automatically show buddy welcome message
   useEffect(() => {
